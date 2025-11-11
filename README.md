@@ -7,7 +7,7 @@ AnimStack
 ---------
 Animation tools package
 
-* [GIMP Registry page]([http://registry.gimp.org/node/26501](https://web.archive.org/web/20171221001911/http://registry.gimp.org/node/26501))
+* [GIMP Registry page](https://web.archive.org/web/20171221001911/http://registry.gimp.org/node/26501)
 * [Youtube tutorials](http://www.youtube.com/playlist?list=PLiASt6bCYQNCRlWbGrwyPnmJlwIzMziEq)
 * [Tumblr](http://animstack.tumblr.com/)
 
@@ -15,7 +15,7 @@ BgMask
 ------
 Masking/background extraction
 
-* [GIMP Registry page]([http://registry.gimp.org/node/27601](https://web.archive.org/web/20180622170515/http://registry.gimp.org/node/27601))
+* [GIMP Registry page](https://web.archive.org/web/20180622170515/http://registry.gimp.org/node/27601)
 
 Export Layers Plus
 ------------------
