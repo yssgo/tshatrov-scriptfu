@@ -1,3 +1,6 @@
+#!/usr/bin/env gimp-script-fu-interpreter-3.0
+;!# Close comment started on first line. Needed by gettext. -*- coding: utf-8 -*-
+
 ;;; LayerScript - persistent layer effects for GIMP
 ;;; v. 0.2
 
@@ -70,7 +73,7 @@ exception as of GIMP 2.8. Returns #f if not a number."
                        (car (gimp-image-get-width img))
                        (car (gimp-image-get-height img))
                        (get-layer-type img)
-                       100 0)))
+                       100 LAYER-MODE-NORMAL)))
 
 (define (walk-layers-recursive-full img test fn)
   "different from walk-layers-recursive from animstack.scm in that it
@@ -431,9 +434,9 @@ recurses down a layer group even if it passes the test"
   (with-params
    (((mode selmode) 2))
    (lambda (source target opts)
-     (let ((xy (gimp-drawable-offsets source))
-           (width (car (gimp-drawable-width source)))
-           (height (car (gimp-drawable-height source))))
+     (let ((xy (gimp-drawable-get-offsets source))
+           (width (car (gimp-drawable-get-width source)))
+           (height (car (gimp-drawable-get-height source))))
        (select-rectangle img mode (car xy) (cadr xy) width height)))))
 
 (define (layerscript-sbox img params)
