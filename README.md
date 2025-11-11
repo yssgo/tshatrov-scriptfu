@@ -7,7 +7,7 @@ AnimStack
 ---------
 Animation tools package
 
-* [Documentation](https://tshatrov.github.io/animstack)
+* [GIMP Registry page](https://web.archive.org/web/20171221001911/http://registry.gimp.org/node/26501)
 * [Youtube tutorials](http://www.youtube.com/playlist?list=PLiASt6bCYQNCRlWbGrwyPnmJlwIzMziEq)
 * [Tumblr](http://animstack.tumblr.com/)
 
@@ -15,10 +15,8 @@ BgMask
 ------
 Masking/background extraction
 
-* [GIMP Registry page](https://html-preview.github.io/?url=https://github.com/tshatrov/scriptfu/blob/gimp-3/bgmask.htm)
+* [GIMP Registry page](https://web.archive.org/web/20180622170515/http://registry.gimp.org/node/27601)
 
 Export Layers Plus
 ------------------
 Export layers as individual images
-
-* [GIMP Registry page](https://html-preview.github.io/?url=https://github.com/tshatrov/scriptfu/blob/gimp-3/export-layers-plus.htm)
