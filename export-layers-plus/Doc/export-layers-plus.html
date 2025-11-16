@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+            <html>
+                <head>                    
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+                    <title>export-layers-plus.md</title>
+                    <style type="text/css">
+                    /* style.css */
+body {width:800px; font-size: 1.2em; padding: 1em; margin: 0 auto; font-family: serif}
+code {font-family: "Cascadia Code", Consolas, "SF Mono", "Melono",
+ "Liberation Mono", Monospace, "DejaVu Sans Mono", monspace}
+
+                    </style>
+                </head>
+                <body style="">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<p id="2"><a href="export-layers-plus-ko.html">한국어</a></p>
+<h1 id="4">Export Layers Plus</h1>
+<p id="6">Yes, it's yet another export layers script!
+This one is mainly targeted for video editing applications.
+I wrote it because all the other scripts weren't good enough
+for my purposes.</p>
+<p id="11">Script is located in File/Export Layers (scm, by Timofe Shatrov)...</p>
+<h2 id="14">Features</h2>
+<ul id="16">
+<li id="16">Can name output files based on frame counter
+(i.e. &quot;<code>frame_000.png</code>&quot;, &quot;<code>frame_001.png</code>&quot; and so on)</li>
+<li id="18">Can export only visible or only linked layers</li>
+<li id="19">Correctly exports layers with layer masks</li>
+<li id="20">Can export top to bottom or bottom to top</li>
+<li id="21">Can resample to different frame rate
+(and understands frame delay modifiers i.e. &quot;<code>(NNms)</code>&quot;)</li>
+<li id="23">Can also interpolate frames when resampling</li>
+</ul>
+<p id="25">This script was used to produce
+the award winning short film <em>&quot;Stretch Those Glutes (ANNIVERSARY EDITION!)&quot;</em></p>
+<h2 id="29">Options description</h2>
+<ul id="31">
+<li id="31"><p id="31"><strong><code>Output directory</code></strong> - select a directory where to export the files</p>
+</li>
+<li id="32"><p id="32"><strong><code>Filename format</code></strong> - describes how each layer will be named
+when it's exported.</p>
+<p id="35">You can use several formatting directives:</p>
+<ul id="36">
+<li id="36">&quot;%n&quot; inserts image name (usually the filename),</li>
+<li id="37">&quot;<code>%l</code>&quot; inserts layer name (don't use this with resampling enabled),</li>
+<li id="38">&quot;%i&quot; inserts the current counter value.</li>
+</ul>
+<p id="40">You can pad it with zeros so that all numbers have identical width.
+For example &quot;%3i&quot; will produce &quot;000&quot;, &quot;001&quot;, &quot;002&quot; and so on.
+The default filename format uses &quot;%6i&quot;
+which produces image sequences to be imported in Sony Vegas NLE.
+Make sure your filename has an extension.</p>
+</li>
+<li id="45"><p id="45"><strong><code>Walk direction</code></strong> - the direction in which the layers are processed.
+This mostly affects the counter.</p>
+</li>
+<li id="47"><p id="47"><strong><code>Count offset</code></strong> - what number do we start counting from</p>
+</li>
+<li id="48"><p id="48"><strong>Filter</strong> - allows to export only visible or only linked layers</p>
+</li>
+<li id="49"><p id="49"><strong><code>Resample mode</code></strong> - when Off, it just exports the layers.
+However when &quot;<code>No interpolation</code>&quot; or &quot;<code>Use interpolation</code>&quot; is selected,
+it resamples layers to a fixed framerate.
+By default a layer is assumed to last 100ms,
+which can be changed by assigning a delay to a layer via adding &quot;<code>(XXXms)</code>&quot; to its name.
+When exported with resampling, each file represents a fixed amount of time,
+which is set by <strong><code>Frame rate</code></strong> option.
+For each of these periods of time, a layer is chosen to represent it.
+When &quot;<code>Use interpolation</code>&quot; is selected,
+it might sometimes select two layers and average them to produce a transition.</p>
+</li>
+<li id="59"><p id="59"><strong><code>Interpolation threshold</code></strong> - when &quot;<code>Resample mode</code>&quot; is
+&quot;<code>Use interpolation</code>&quot;, this option prevents interpolating
+when only a small part of layer fits into a frame. For example:</p>
+<p id="63"><img src="pVRpVSr.png" alt="pVRpVSr.png" /></p>
+<p id="65">If <code>y</code> is less than interpolation threshold,
+<code>layer 1</code> will be used for <code>frame 2</code> without interpolation.
+Otherwise, <code>frame 2</code> will be an interpolation of <code>layer 1</code> and <code>layer 2</code>.</p>
+</li>
+</ul>
+
+                </body>
+            </html>
+            

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+            <html>
+                <head>                    
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+                    <title>export-layers-plus-ko.md</title>
+                    <style type="text/css">
+                    /* style.css */
+body {width:800px; font-size: 1.2em; padding: 1em; margin: 0 auto; font-family: serif}
+code {font-family: "Cascadia Code", Consolas, "SF Mono", "Melono",
+ "Liberation Mono", Monospace, "DejaVu Sans Mono", monspace}
+
+                    </style>
+                </head>
+                <body style="">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<p id="2"><a href="export-layers-plus-ko.html">English</a></p>
+<link rel="stylesheet" type="text/css" href="style-ko.css" />
+<h1 id="6">Export Layers Plus</h1>
+<p id="8">네, 또 다른 레이어 내보내기 스크립트입니다!
+이 스크립트는 주로 비디오 편집 애플리케이션을 대상으로 합니다.
+다른 스크립트들이 제 용도에 맞지 않아서 이 스크립트를 작성했습니다.</p>
+<p id="12">스크립트는 파일/Export Layers (scm, by Timofe Shatrov)에 있습니다...</p>
+<h2 id="15">기능</h2>
+<ul id="17">
+<li id="17">프레임 카운터를 기준으로 출력 파일(들)의 이름을 지정할 수 있습니다.
+(예: &quot;<code>frame_000.png</code>&quot;, &quot;<code>frame_001.png</code>&quot; 등)</li>
+<li id="19">표시된 레이어(들) 또는 연결된 레이어(들)만 내보낼 수 있습니다.</li>
+<li id="20">레이어 마스크가 있는 레이어(들)를 올바르게 내보낼 수 있습니다.</li>
+<li id="21">위에서 아래로 또는 아래에서 위로 내보낼 수 있습니다.</li>
+<li id="22">다른 프레임 속도로 리샘플링(표본 다시 뽑기)할 수 있습니다.
+(프레임 지연 수정자(들)(예: &quot;<code>(NNms)</code>&quot;)를 알아듣습니다)</li>
+<li id="24">리샘플링할 때 프레임(들)을 보간(사이에 보충해 넣기)할 수 있습니다.</li>
+</ul>
+<p id="26">이 스크립트는 수상 경력에 빛나는 단편 영화 <em>&quot;Stretch Those Glutes (ANNIVERSARY EDITION!)&quot;</em> 제작에 사용되었습니다.</p>
+<h2 id="29">옵션 설명</h2>
+<ul id="31">
+<li id="31"><p id="31"><strong><code>Output directory(출력 디렉터리)</code></strong> - 파일(들)을 내보낼 디렉터리를 선택합니다.</p>
+</li>
+<li id="32"><p id="32"><strong><code>Filename format(파일 이름 형식)</code></strong> - 내보낼 때 각 레이어의 이름을 지정합니다.</p>
+<p id="34">여러 가지 서식 지정 지시어를 사용할 수 있습니다.</p>
+<ul id="35">
+<li id="35">&quot;%n&quot;은 이미지 이름(일반적으로 파일 이름)을 삽입합니다.</li>
+<li id="36">&quot;<code>%l</code>&quot;은 레이어 이름을 삽입합니다('리샘플링 하기'를 선택했을 때는 사용하지 마세요).</li>
+<li id="37">&quot;%i&quot;는 현재 카운터 값을 삽입합니다.</li>
+</ul>
+<p id="39">모든 숫자의 너비가 동일하도록 0으로 채울 수 있습니다.
+예를 들어 &quot;%3i&quot;는 &quot;000&quot;, &quot;001&quot;, &quot;002&quot; 등을 생성합니다.
+기본 파일 이름 형식은 &quot;%6i&quot;를 사용합니다.
+이는 Sony Vegas NLE에서 가져올 이미지 시퀀스를 생성합니다.
+파일 이름에 확장자가 있는지 확인하세요.</p>
+</li>
+<li id="45"><p id="45"><strong><code>Walk direction(걷기 방향)</code></strong> - 레이어가 처리되는 방향입니다.
+이는 주로 카운터에 영향을 미칩니다.</p>
+</li>
+<li id="47"><p id="47"><strong><code>Count offset(번호 매기기 시작값)</code></strong> - 번호 매기기를 시작할 시작 숫자</p>
+</li>
+<li id="48"><p id="48"><strong>Filter(거르기)</strong> - 보이는 레이어만 또는 연결된 레이어만 내보낼 수 있습니다.</p>
+</li>
+<li id="49"><p id="49"><strong><code>Resample mode(표본재추출 모드)</code></strong> - 끄면 레이어 내보내기만 합니다.
+하지만 &quot;<code>No interpolation(보간 없음)</code>&quot; 또는 &quot;<code>Use interpolation(보간 사용)</code>&quot;을 선택하면,
+레이어(들)를 고정된 프레임 속도에 맞추어 리샘플링(표본재추출)합니다.
+기본적으로 레이어는 100ms 동안 지속되는 것으로 가정하지만,
+이름에 &quot;<code>(XXXms)</code>&quot;를 추가하여 지연 시간을 지정하면 변경할 수 있습니다.
+리샘플링(표본재추출)을 사용하여 내보낼 때는,
+각 파일은 <strong><code>Fram rate(프레임 속도)</code></strong> 옵션으로 설정된 고정된 길이의 시간을 나타냅니다.
+각 시간 주기마다 해당 시간을 나타내는 레이어가 선택됩니다.
+&quot;<code>User interpolation(보간 사용)</code>&quot;을 선택하면, 때때로 레이어를 두 개를 선택하고
+평균을 내어서 전환 효과를 생성하게 될 수도 있습니다.</p>
+</li>
+<li id="59"><p id="59"><strong><code>Interpolation threshold(보간 임곗값)</code></strong> - &quot;<code>Resample mode(표본재추출 모드)</code>&quot;로
+&quot;<code>Use interpolation(보간 사용)</code>&quot;을 선택했을 때, 이 옵션은 레이어의 작은 일부분만 프레임에 들어갈 때
+보간이 되는 것을 방지합니다. 예:</p>
+<p id="63"><img src="pVRpVSr.png" alt="pVRpVSr.png" /></p>
+<p id="65"><code>y</code>가 보간 임곗값보다 작으면,
+<code>프레임 2</code>에는 보간 없이 <code>레이어 1</code>이 사용됩니다.
+그렇지 않으면 <code>프레임 2</code>는 <code>레이어 1</code>과 <code>레이어 2</code>의
+보간(역주: 여기서는, 두 레이어의 평균을 사용해서 만든 프레임)이 됩니다.</p>
+</li>
+</ul>
+
+                </body>
+            </html>
+            
