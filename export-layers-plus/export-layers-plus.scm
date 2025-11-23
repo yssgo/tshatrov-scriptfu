@@ -92,7 +92,10 @@
         (layers (reverse (vector->list (cadr (gimp-image-get-layers img))))))
     (for-each
      (lambda (layer)
-       (let ((layer-copy (car (gimp-layer-new-from-drawable layer newimg))))
+       (let* (
+            (layer-name (gimp-item-get-name layer))
+            (layer-copy (car (gimp-layer-new-from-drawable layer newimg))))
+         (gimp-item-set-name layer-copy (car (gimp-item-get-name layer)))
          (gimp-image-insert-layer newimg layer-copy 0 0)))
      layers)
     newimg))
@@ -331,14 +334,14 @@ to calculate averages.
               (let* ((timeline (elp-get-timeline timg walk-direction layer-filter))
                      (index (elp-resampling-index timg timeline resample-mode frame-rate resample-threshold)))
                 (elp-index-export timg img-name path filename-template count-offset index)))
-          (for-each gimp-image-delete tempimgs)))))
+          (for-each (lambda (_image) (gimp-image-delete _image)) tempimgs)))))
 
 
 
 (script-fu-register
   "script-fu-export-layers-plus"
-  "Export Layers Plus..."
-  "Export layers as separate images (scm, by Timofei Shatrov)"
+  "Export Layers Plus (scm)..."
+  "Export layers as separate images (by Timofei Shatrov)"
   "Timofei Shatrov"
   "2013"
   "2013"
@@ -373,8 +376,8 @@ to calculate averages.
 
 (script-fu-register
   "script-fu-export-layers-plus-help"
-  "Help for ‘Export Layers Plus’ "
-  "Open the html document for ‘Export Layers Plus (scm, by Timofe Shatrov)’ "
+  "Help for ‘Export Layers Plus’ (scm)"
+  "Open the html document for ‘Export Layers Plus’"
   "Sesu Iun"
   "2025"
   "2025"
