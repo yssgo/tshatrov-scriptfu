@@ -123,12 +123,12 @@
    (lambda (count layer)
      (elp-export-layer img img-name path filename-template (+ count count-offset) layer))))
 
-(define (elp-index-export img img-name path filename-template count-offset index)
+(define (elp-index-export timg img-name path filename-template count-offset index)
   "index is just a list of layers that need to be exported"
   (let ((count 0))
     (for-each
      (lambda (layer)
-       (elp-export-layer img img-name path filename-template (+ count count-offset) layer)
+       (elp-export-layer timg img-name path filename-template (+ count count-offset) layer)
        (set! count (+ count 1)))
      index)))
 
@@ -330,7 +330,7 @@ to calculate averages.
               (do-simple-export timg)
               (let* ((timeline (elp-get-timeline timg walk-direction layer-filter))
                      (index (elp-resampling-index timg timeline resample-mode frame-rate resample-threshold)))
-                (elp-index-export img img-name path filename-template count-offset index)))
+                (elp-index-export timg img-name path filename-template count-offset index)))
           (for-each gimp-image-delete tempimgs)))))
 
 
