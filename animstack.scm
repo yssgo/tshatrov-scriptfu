@@ -1936,6 +1936,7 @@ where tag might be #f"
 (define (animstack-process-all-layers img)
   (srand (realtime))
   (gimp-image-undo-group-start img)
+  (gimp-image-freeze-layers img)
   (let ((layers (cadr (gimp-image-get-layers img))))
     ;; make everylayer visible. this is because it might be extremely
     ;; annoying to make them visible again after everything is jumbled up
@@ -1962,6 +1963,7 @@ where tag might be #f"
      (lambda (layer) (animstack-process-layer img layer #f))
      layers))
   (gimp-context-pop)
+  (gimp-image-thaw-layers img)
   (gimp-image-undo-group-end img)
   (gimp-displays-flush))
 
