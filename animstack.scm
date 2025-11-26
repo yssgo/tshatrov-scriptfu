@@ -2,6 +2,28 @@
 ;;; by Timofei Shatrov
 ;;; v. 0.64
 
+
+(define (animstack-gimpver) (let* (
+    (verstr (car (gimp-version)))
+    (buf (make-vector 4 '())))
+    (re-match "^(\\d+)\.(\\d+)\.(\\d+)" verstr buf)    
+    (set! buf (vector->list buf))
+    (set! buf (cdr buf))
+    (list 
+        (string->number (substring verstr (caar buf) (cdar buf)) )
+        (string->number (substring verstr (caadr buf) (cdadr buf)) )
+    )))
+
+(define (animstack-gimpver-lss major minor)
+  (if (or
+       (< (car (animstack-gimpver)) major)
+       (and
+        (= (car (animstack-gimpver)) major)
+        (< (cadr (animstack-gimpver)) minor)))
+      #t
+      #f))
+    
+
 (define (display-to-string value)
   "Prints anything to string using display function"
   (let ((port (open-output-string)))
@@ -140,7 +162,6 @@
   (gimp-displays-flush))
 
 (define script-fu-flatten-layer-groups flatten-layer-groups)
-
 (script-fu-register
  "script-fu-flatten-layer-groups"
  "Flatten Layer Groups"
@@ -151,7 +172,6 @@
  "RGB RGBA GRAY GRAYA"
  SF-IMAGE     "Image to use"       0
  )
-
 (script-fu-menu-register "script-fu-flatten-layer-groups" "<Image>/Image")
 
 ;;; Animation stacker
@@ -752,7 +772,7 @@ where tag might be #f"
 (define (make-temp-sampler-layer img group width height)
   (let ((layer (car (gimp-layer-new img width height RGBA-IMAGE
                                     "Sample layer"
-                                    100 NORMAL-MODE))))
+                                    100 (if (animstack-gimpver-lss 2 10) NORMAL-MODE LAYER-MODE-NORMAL)))))
     (gimp-image-insert-layer img layer group 0)
     (gimp-layer-set-offsets layer 0 0)
     layer))
