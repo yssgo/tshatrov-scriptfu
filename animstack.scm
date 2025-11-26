@@ -3,26 +3,33 @@
 ;;; v. 0.64
 
 
-(define (animstack-gimpver) (let* (
-    (verstr (car (gimp-version)))
-    (buf (make-vector 4 '())))
+(define (animstack-gimpver)
+  (let* ( (verstr (car (gimp-version)))
+          (buf (make-vector 4 '())))
     (re-match "^(\\d+)\.(\\d+)\.(\\d+)" verstr buf)    
     (set! buf (vector->list buf))
     (set! buf (cdr buf))
-    (list 
-        (string->number (substring verstr (caar buf) (cdar buf)) )
-        (string->number (substring verstr (caadr buf) (cdadr buf)) )
-    )))
+    (map string->number
+      (list (substring verstr (caar buf) (cdar buf))
+          (substring verstr (caadr buf) (cdadr buf))
+          (substring verstr (caaddr buf) (cdaddr buf)) ))))
 
-(define (animstack-gimpver-lss major minor)
+
+(define (animstack-gimpver-lss major minor micro)
   (if (or
        (< (car (animstack-gimpver)) major)
        (and
         (= (car (animstack-gimpver)) major)
-        (< (cadr (animstack-gimpver)) minor)))
+        (< (cadr (animstack-gimpver)) minor))
+       (and
+        (= (car (animstack-gimpver)) major)
+        (= (cadr (animstack-gimpver)) minor)
+        (< (caddr (animstack-gimpver)) micro)))
       #t
       #f))
-    
+
+(define (animstack-gimpver-geq major minor micro)
+    (not (animstack-gimpver-lss major minor micro)))
 
 (define (display-to-string value)
   "Prints anything to string using display function"
@@ -133,6 +140,7 @@
 (define (flatten-layer-groups img)
   "Flatten all layer groups in an image"
   (gimp-image-undo-group-start img)
+  (if (animstack-gimpver-geq 2 10 2) (gimp-image-freeze-layers img))
   (let* ((get-layers (gimp-image-get-layers img))
          (layers (cadr get-layers))
          (visi-status (make-vector (car get-layers)))
@@ -158,6 +166,7 @@
        (gimp-item-set-visible layer (vector-ref visi-status i))
        (set! i (+ i 1)))
      (cadr (gimp-image-get-layers img))))
+  (if (animstack-gimpver-geq 2 10 2) (gimp-image-thaw-layers img))
   (gimp-image-undo-group-end img)
   (gimp-displays-flush))
 
@@ -772,7 +781,7 @@ where tag might be #f"
 (define (make-temp-sampler-layer img group width height)
   (let ((layer (car (gimp-layer-new img width height RGBA-IMAGE
                                     "Sample layer"
-                                    100 (if (animstack-gimpver-lss 2 10) NORMAL-MODE LAYER-MODE-NORMAL)))))
+                                    100 (if (animstack-gimpver-lss 2 10 0) NORMAL-MODE LAYER-MODE-NORMAL)))))
     (gimp-image-insert-layer img layer group 0)
     (gimp-layer-set-offsets layer 0 0)
     layer))
@@ -1956,7 +1965,7 @@ where tag might be #f"
 (define (animstack-process-all-layers img)
   (srand (realtime))
   (gimp-image-undo-group-start img)
-  (gimp-image-freeze-layers img)
+  (if (animstack-gimpver-geq 2 10 2) (gimp-image-freeze-layers img))
   (let ((layers (cadr (gimp-image-get-layers img))))
     ;; make everylayer visible. this is because it might be extremely
     ;; annoying to make them visible again after everything is jumbled up
@@ -1983,7 +1992,7 @@ where tag might be #f"
      (lambda (layer) (animstack-process-layer img layer #f))
      layers))
   (gimp-context-pop)
-  (gimp-image-thaw-layers img)
+  (if (animstack-gimpver-geq 2 10 2) (gimp-image-thaw-layers img))
   (gimp-image-undo-group-end img)
   (gimp-displays-flush))
 
@@ -2156,8 +2165,10 @@ where tag might be #f"
                       (map-filter (lambda (x) x) (vector->list layers)
                                   is-untagged?))))
     (gimp-image-undo-group-start img)
+    (if (animstack-gimpver-geq 2 10 2) (gimp-image-freeze-layers img))
     (cond ((= mode 0) (animstack-reverse-layers img parent layers #f))
           ((= mode 1) (animstack-mirror-layers img parent layers)))
+    (if (animstack-gimpver-geq 2 10 2) (gimp-image-thaw-layers img))
     (gimp-image-undo-group-end img)))
 
 (script-fu-register
