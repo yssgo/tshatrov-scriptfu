@@ -1,1 +1,64 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-06 12:44+0900\n"
+"PO-Revision-Date: 2026-05-06 12:45+0900\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.9\n"
 
+#: .\animstack3.scm:184
+msgid "Flatten Layer Groups (T. Shatrov)"
+msgstr "레이어 그룹 평면화 (T. Shatrov)"
+
+#: .\animstack3.scm:185
+msgid "Flattens all layer groups in an image"
+msgstr "이미지 내의 모든 레이어 그룹을 평면화합니다"
+
+#. FOR TRANSLATORS: Don't translate '<Image>/Image/'
+#: .\animstack3.scm:195 .\animstack3.scm:2233
+msgid "<Image>/Image/Timofei Shatrov"
+msgstr "<Image>/Image/Timofei Shatrov"
+
+#: .\animstack3.scm:2130
+msgid "Process AnimStack tags (T. Shatrov)"
+msgstr "AnimStack 태그 처리 (T. Shatrov)"
+
+#: .\animstack3.scm:2131
+msgid "Process all AnimStack tags"
+msgstr "모든 AnimStack 태그를 처리합니다"
+
+#: .\animstack3.scm:2221
+msgid "Reverse OR Mirror layers (T. Shatrov)..."
+msgstr "레이어 순서-역전 또는 미러링 (T. Shatrov)..."
+
+#: .\animstack3.scm:2222
+msgid "Reverse or mirror layers at the same level as selected layer"
+msgstr "선택한 레이어와 같은 레벨에 있는 레이어를 순서-역전하거나 미러링 하기"
+
+#: .\animstack3.scm:2228
+msgid "O_peration"
+msgstr "작업(_p)"
+
+#: .\animstack3.scm:2228
+msgid "R_everse"
+msgstr "순서-역전(_e)"
+
+#: .\animstack3.scm:2228
+msgid "_Mirror"
+msgstr "미러링(_m)"
+
+#: .\animstack3.scm:2229
+msgid "_Ignore tagged layers"
+msgstr "태그가 지정된 레이어 무시(_i)"
