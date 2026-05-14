@@ -6,14 +6,29 @@
 ;;; GIMP Animation Tools
 ;;; by Timofei Shatrov
 ;;; v. 0.64
-(define *tsh-debug* #t)
+;;(load (string-append gimp-directory "\\" "plug-ins\\animstack3\\ssiun-utils-v2v3.scm"))
+(define *tsh_debug* #t)
 (define *tsh-v3* #f)
+(define (tsh_get_v3) *tsh-v3*)
+(define (tsh_set_v3 enable)
+  (if (or (eqv? enable #t) (eqv? enable TRUE))
+      (begin        
+        (script-fu-use-v3)
+        (set! *ssiun-v3* #t)
+        (set! *tsh-v3* #t))
+      (begin
+       (script-fu-use-v2)
+       (set! *ssiun-v3* #f)
+       (set! *tsh-v3* #f))))
+
 (define (tsh-debugvars . args )
   (if *tsh-debug*
     (apply ssiun-errmsgln-vars* args)))
+
 (define (tsh-debugmsg . args )
   (if *tsh-debug*
     (apply ssiun-errmsgln* args)))
+
 ;; revised for GIMP 3.0.4 by Ssiun Enuy on July 16,2025.
 (define (tsh-display-to-string value)
   "Prints anything to string using display function"
@@ -128,52 +143,38 @@
 
 
 (define (tsh-flatten-layer-group img layer)
-  "Flatten a single layer group"
-  ;; ok... there is no function for that... gotta do it the hard way...
-  (let* ((layers (car (gimp-image-get-layers img))))
-    (tsh-vector-for-each
-     (lambda (lr) (gimp-item-set-visible lr (if (= lr layer) TRUE FALSE)))
-     layers)
-    ;; do we need to make every sublayer of layer visible at this point?
-    (gimp-image-merge-visible-layers img EXPAND-AS-NECESSARY)))
+  "Flatten a single layer group"  
+  (let* ((retvar -1) (old_v3 (tsh_get_v3)))
+    (tsh_set_v3 #t)
+    (set! retvar
+      (if (gimp-item-is-group layer)
+        (gimp-group-layer-merge layer)
+        layer))
+    (tsh_set_v3 old_v3)
+    retvar))
 
 (define (tsh-flatten-layer-groups img)
   "Flatten all layer groups in an image"
-  (gimp-image-undo-group-start img)
-  (gimp-image-freeze-layers img)
-  (let* ((layers (car (gimp-image-get-layers img)))
-         (visi-status (make-vector (vector-length layers)))
-         (i 0)
-         )
-    ;; remember visibility status
-    (tsh-vector-for-each
-     (lambda (layer)
-       (gimp-progress-pulse)
-       (let* ((visible (car (gimp-item-get-visible layer))))
-         (vector-set! visi-status i visible)
-         (set! i (+ i 1))))
-     layers)
-    ;; flatten each layer group
-    (tsh-vector-for-each
-     (lambda (layer)
-       (gimp-progress-pulse)
-       (let* ((is-group (car (gimp-item-is-group layer))))
-         (if (or (= TRUE is-group))
-             (tsh-flatten-layer-group img layer)))
-       )
-     layers)
-    ;; restore visibility status (note that old layers list is useless now)
-    (set! i 0)
-    (tsh-vector-for-each
-     (lambda (layer)
-       (gimp-progress-pulse)
-       (gimp-item-set-visible layer (vector-ref visi-status i))
-       (set! i (+ i 1)))
-     (car (gimp-image-get-layers img))))
-  (gimp-image-thaw-layers img)  
-  (gimp-image-undo-group-end img)
-  (gimp-progress-end)
-  (gimp-displays-flush))
+  (let* ((retvar -1) (old-v3 (tsh_get_v3)))
+    (tsh_set_v3 #t)
+    (set! retvar
+      (let* ((layers (gimp-image-get-layers img)))
+        (gimp-image-undo-group-start img)
+        (gimp-image-freeze-layers img)
+        ;; flatten each layer group
+        (tsh-vector-for-each
+         (lambda (layer)         
+           (if (gimp-item-is-group layer)
+            (begin
+              (tsh-flatten-layer-group img layer)
+              (gimp-progress-pulse))))
+         layers)
+        (gimp-image-thaw-layers img)  
+        (gimp-image-undo-group-end img)
+        (gimp-progress-end)
+        (gimp-displays-flush)))
+    (tsh-set-v3 old-v3)
+    retvar))
 
 (define (script-fu-tsh-flatten-layer-groups-filter InImage InDrawables)
   (tsh-flatten-layer-groups InImage))
