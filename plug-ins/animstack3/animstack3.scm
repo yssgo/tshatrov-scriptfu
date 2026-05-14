@@ -7,7 +7,7 @@
 ;;; by Timofei Shatrov
 ;;; v. 0.64
 ;;(load (string-append gimp-directory "\\" "plug-ins\\animstack3\\ssiun-utils-v2v3.scm"))
-(define *tsh_debug* #t)
+(define *tsh-debug* #t)
 (define *tsh-v3* #f)
 (define (tsh_get_v3) *tsh-v3*)
 (define (tsh_set_v3 enable)
