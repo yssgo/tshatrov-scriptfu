@@ -1,4 +1,5 @@
 #!/usr/bin/env gimp-script-fu-interpreter-3.0
+;;; -*- coding: utf-8 -*-
 ;;;!# Close comment started on first line. Needed by gettext.
 
 ;;; GIMP 3.0.4 Script-fu script
@@ -12,22 +13,22 @@
 (define (tsh_get_v3) *tsh-v3*)
 (define (tsh_set_v3 enable)
   (if (or (eqv? enable #t) (eqv? enable TRUE))
-      (begin        
+      (begin
         (script-fu-use-v3)
         (set! *ssiun-v3* #t)
         (set! *tsh-v3* #t))
       (begin
-       (script-fu-use-v2)
-       (set! *ssiun-v3* #f)
-       (set! *tsh-v3* #f))))
+        (script-fu-use-v2)
+        (set! *ssiun-v3* #f)
+        (set! *tsh-v3* #f))))
 
 (define (tsh-debugvars . args )
   (if *tsh-debug*
-    (apply ssiun-errmsgln-vars* args)))
+      (apply ssiun-errmsgln-vars* args)))
 
 (define (tsh-debugmsg . args )
   (if *tsh-debug*
-    (apply ssiun-errmsgln* args)))
+      (apply ssiun-errmsgln* args)))
 
 ;; revised for GIMP 3.0.4 by Ssiun Enuy on July 16,2025.
 (define (tsh-display-to-string value)
@@ -143,13 +144,13 @@
 
 
 (define (tsh-flatten-layer-group img layer)
-  "Flatten a single layer group"  
+  "Flatten a single layer group"
   (let* ((retvar -1) (old_v3 (tsh_get_v3)))
     (tsh_set_v3 #t)
     (set! retvar
-      (if (gimp-item-is-group layer)
-        (gimp-group-layer-merge layer)
-        layer))
+          (if (gimp-item-is-group layer)
+              (gimp-group-layer-merge layer)
+              layer))
     (tsh_set_v3 old_v3)
     retvar))
 
@@ -158,21 +159,21 @@
   (let* ((retvar -1) (old-v3 (tsh_get_v3)))
     (tsh_set_v3 #t)
     (set! retvar
-      (let* ((layers (gimp-image-get-layers img)))
-        (gimp-image-undo-group-start img)
-        (gimp-image-freeze-layers img)
-        ;; flatten each layer group
-        (tsh-vector-for-each
-         (lambda (layer)         
-           (if (gimp-item-is-group layer)
-            (begin
-              (tsh-flatten-layer-group img layer)
-              (gimp-progress-pulse))))
-         layers)
-        (gimp-image-thaw-layers img)  
-        (gimp-image-undo-group-end img)
-        (gimp-progress-end)
-        (gimp-displays-flush)))
+          (let* ((layers (gimp-image-get-layers img)))
+            (gimp-image-undo-group-start img)
+            (gimp-image-freeze-layers img)
+            ;; flatten each layer group
+            (tsh-vector-for-each
+             (lambda (layer)
+               (if (gimp-item-is-group layer)
+                   (begin
+                     (tsh-flatten-layer-group img layer)
+                     (gimp-progress-pulse))))
+             layers)
+            (gimp-image-thaw-layers img)
+            (gimp-image-undo-group-end img)
+            (gimp-progress-end)
+            (gimp-displays-flush)))
     (tsh-set-v3 old-v3)
     retvar))
 
@@ -191,10 +192,10 @@
  SF-ONE-OR-MORE-DRAWABLE
  )
 
-(script-fu-menu-register "script-fu-tsh-flatten-layer-groups-filter"   
-   ;; FOR TRANSLATORS: Don't translate '<Image>/Image/'
-   _"<Image>/Image/Timofei Shatrov"
-   )
+(script-fu-menu-register "script-fu-tsh-flatten-layer-groups-filter"
+                         ;; FOR TRANSLATORS: Don't translate '<Image>/Image/'
+                         _"<Image>/Image/Timofei Shatrov"
+                         )
 (script-fu-register-i18n "script-fu-tsh-flatten-layer-groups-filter" "Standard")
 
 (define (tsh-reorder-or-insert-layer image item parent position)
@@ -208,9 +209,9 @@
   "If layer is not a layer group, make a layer group containing only layer"
   (if (not (tsh-is-true? gimp-item-is-group layer))
       (let* ((group (car (gimp-group-layer-new img)))
-            (layer-name (car (gimp-item-get-name layer)))
-            (default-name-function ;; potentially customizable?
-              (lambda (str) (string-append "+ " str))))
+             (layer-name (car (gimp-item-get-name layer)))
+             (default-name-function ;; potentially customizable?
+               (lambda (str) (string-append "+ " str))))
 
         (gimp-image-set-selected-layers img (vector layer)) ; set active layer
 
@@ -249,7 +250,7 @@
   "Replacement for string->number, which throws an uncatchable
 exception as of GIMP 2.8. Returns #f if not a number."
   (let* ((s2a (string->atom str))
-        (fn (if (pair? opt) (car opt) number?)))
+         (fn (if (pair? opt) (car opt) number?)))
     (and (fn s2a) s2a)))
 
 (define tsh-animstack-save-selection #f)
@@ -445,9 +446,9 @@ where tag might be #f"
     (lambda (target)
       (let* ((bindings (tsh-get-bindings (cadr opts)))
              (tsh-apply-effects (tsh-apply-effects-simple img (list-ref opts 3)
-                                                  bindings #f)))
+                                                          bindings #f)))
         (if (caar opts) (tsh-apply-effects source target))
-        
+
         (let ((new (car (gimp-layer-copy source))))
           (gimp-item-set-name new copy-name)
           (set! target (tsh-put-layer-in-group img new target pos gimp-image-insert-layer))
@@ -455,8 +456,8 @@ where tag might be #f"
           (if (not (caar opts)) (tsh-apply-effects new target)))))))
 
 (define (tsh-animstack-next-fn delta opts)
-  (let* ((reverse (cadar opts))
-         (delta (if reverse (- delta) delta)))
+  (let* ((reverse_ (cadar opts))
+         (delta (if reverse_ (- delta) delta)))
     (lambda (i) (+ i delta))))
 
 
@@ -490,7 +491,7 @@ where tag might be #f"
   (lambda (target)
     (let* ((bindings (tsh-get-bindings (cadr opts)))
            (tsh-apply-effects (tsh-apply-effects-simple img (list-ref opts 3)
-                                                bindings #f)))
+                                                        bindings #f)))
       (tsh-apply-effects source target)
       (tsh-process-dup-options* opts img bindings target (lambda (tgt) source)))))
 
@@ -541,9 +542,9 @@ where tag might be #f"
              (layer (list-ref roll-list pick))
              (bindings (tsh-get-bindings (cadr opts)))
              (tsh-apply-effects (lambda (layer src)
-                              (for-each (lambda (effect)
-                                          (effect img layer target bindings src))
-                                        (list-ref opts 3)))))
+                                  (for-each (lambda (effect)
+                                              (effect img layer target bindings src))
+                                            (list-ref opts 3)))))
         (if (caar opts) (tsh-apply-effects layer source))
         (let ((new (car (gimp-layer-copy layer))))
           (gimp-item-set-name new (tsh-default-copy-name new))
@@ -600,14 +601,14 @@ where tag might be #f"
   (gimp-item-set-visible bg-layer TRUE)
   (tsh-animstack-restore-selection img))
 
-       
+
 ;;TODO: fix terrible copy pasting of tsh-copy-action
 (define (tsh-matte-action threshold img source pos opts)
   (let ((copy-name (tsh-default-copy-name source)))
     (lambda (target)
       (let* ((bindings (tsh-get-bindings (cadr opts)))
              (tsh-apply-effects (tsh-apply-effects-simple img (list-ref opts 3)
-                                                  bindings #f)))
+                                                          bindings #f)))
         (if (caar opts) (tsh-apply-effects source target))
         (let ((new (car (gimp-layer-copy source))))
           (gimp-item-set-name new copy-name)
@@ -621,7 +622,7 @@ where tag might be #f"
    ((threshold 1) limit)
    (let* ((threshold (max threshold 0))
           (fn (tsh-animstack-common -1 -1
-                                (lambda args (apply tsh-matte-action threshold args)))))
+                                    (lambda args (apply tsh-matte-action threshold args)))))
      (fn img layer opts limit))))
 
 ;; delete
@@ -631,7 +632,7 @@ where tag might be #f"
       (lambda (target)
         (let* ((bindings (tsh-get-bindings (cadr opts)))
                (tsh-apply-effects (tsh-apply-effects-simple img (list-ref opts 3)
-                                                    bindings #f)))
+                                                            bindings #f)))
           (tsh-apply-effects source target)
           (tsh-process-dup-options* opts img bindings target (lambda (tgt) source))
           (if (< (modulo count step) width)
@@ -688,7 +689,7 @@ where tag might be #f"
   (lambda (target)
     (let* ((bindings (tsh-get-bindings (cadr opts)))
            (tsh-apply-effects (tsh-apply-effects-simple img (list-ref opts 3)
-                                                bindings #f))
+                                                        bindings #f))
            (interval (if only (tsh-animstack-get-interval target only interval) #f))
            (realpos (if interval (car interval) 0))
            (shift (if under 0 1))
@@ -738,9 +739,9 @@ where tag might be #f"
 (define (tsh-animstack-linear-transition count coords1 coords2)
   (if (> count 0)
       (let* ((avg (lambda (i n)
-                   (let ((c1 (list-ref coords1 i))
-                         (c2 (list-ref coords2 i)))
-                     (+ c1 (* (/ n count) (- c2 c1))))))
+                    (let ((c1 (list-ref coords1 i))
+                          (c2 (list-ref coords2 i)))
+                      (+ c1 (* (/ n count) (- c2 c1))))))
              (di (lambda (i)
                    (let ((c1 (list-ref coords1 i))
                          (c2 (list-ref coords2 i)))
@@ -809,7 +810,7 @@ where tag might be #f"
         (tsh-get-toplevel-parent parent))))
 
 (define (tsh-sampler-count-frames-above img layer opts)
-  (let* ((reverse (cadar opts))
+  (let* ((reverse_ (cadar opts))
          (tl (list-ref (car opts) 2))
          (count 0)
          (toplevel (tsh-get-toplevel-parent layer))
@@ -817,7 +818,7 @@ where tag might be #f"
          (layers (car (gimp-image-get-layers img)))
          (last (- (vector-length layers) 1))
          (terminate #f))
-    (do ((i pos (+ i (if reverse 1 -1))))
+    (do ((i pos (+ i (if reverse_ 1 -1))))
         ((or terminate (< i 0) (> i last)) count)
       (let* ((layer (vector-ref layers i)))
         (if (tsh-is-untagged? layer)
@@ -859,7 +860,7 @@ where tag might be #f"
              (pt (path sampler-count))
              (bindings (tsh-get-bindings (cadr opts)))
              (tsh-apply-effects (tsh-apply-effects-simple img (list-ref opts 3)
-                                                  bindings #f)))
+                                                          bindings #f)))
         (apply tsh-animstack-sample-to-target img src temp-layer (car pt))
         (tsh-animstack-set-motion (cadr pt))
         (if (caar opts) (tsh-apply-effects temp-layer target))
@@ -928,7 +929,7 @@ where tag might be #f"
        (let* ((nodes (map tsh-get-layer-coords node-layers))
               (path (tsh-animstack-linear-path count nodes))
               (action (tsh-sampler-action img temp-layer source path
-                                      pos opts roll-mode))
+                                          pos opts roll-mode))
               (tl (list-ref (car opts) 2)))
          (tsh-layer-walk getter start next tsh-is-untagged? action limit #t tl))
        (tsh-animstack-restore-image-size img)
@@ -956,7 +957,7 @@ where tag might be #f"
          (dir (list-ref opts1 3))
          ;; range set to always true because it gets confusing otherwise
          (tsh-apply-effects (lambda (layer tgt effects)
-                          ((tsh-apply-effects-simple img effects bindings #f (lambda (n) #t)) layer tgt)))
+                              ((tsh-apply-effects-simple img effects bindings #f (lambda (n) #t)) layer tgt)))
          (pos (car (gimp-image-get-item-position img target)))
          )
     (letrec ((branch-out
@@ -1023,12 +1024,18 @@ where tag might be #f"
   (tsh-with-params
    ((dir 1))
    (let* ((group (tsh-groupify-layer img layer))
-          (contents* (car (gimp-item-get-children group)))
-          (contents (vector->list contents*))
+          (contents* (let* ((children '()))
+                      (set! children (car (gimp-item-get-children group)))
+                      (list (vector-length children) children)))
+          (contents (vector->list (cadr contents*)))
           (primary #f)
           (dupes #f)
           (position (car (gimp-image-get-item-position img group))))
-     (if (= (car contents*) 0) (error "Empty duplicate tree"))
+
+     (if (= (car contents) 0)
+      (begin
+        (tsh-gimp-message* "Empty duplicate tree !")
+        (error "Empty duplicate tree")))
      (if (> dir 0) (set! contents (reverse contents)))
      (set! primary (car contents))
      (set! dupes (cdr contents))
@@ -1045,7 +1052,7 @@ where tag might be #f"
 (define (tsh-animstack-parse-tagname str)
   ;; (name . (cumulative reverse terminate-label))
   (let* ((cumulative #t)
-         (reverse #f)
+         (reverse_ #f)
          (terminate-label #f)
          (bake
           (lambda (str)
@@ -1054,14 +1061,14 @@ where tag might be #f"
                   (begin
                     (set! terminate-label (tsh-parse-tag-param-simple (cadr split)))
                     (set! str (car split)))))
-            (list str cumulative reverse terminate-label))))
+            (list str cumulative reverse_ terminate-label))))
     (let loop ((str str))
       (cond ((= (string-length str) 0) (bake str))
             ((char=? (string-ref str 0) #\.)
              (set! cumulative #f)
              (loop (substring str 1 (string-length str))))
             ((char=? (string-ref str 0) #\~)
-             (set! reverse #t)
+             (set! reverse_ #t)
              (loop (substring str 1 (string-length str))))
             (else (bake str))))))
 
@@ -1082,17 +1089,41 @@ where tag might be #f"
      )))
 
 (define (animstack-process-tag img layer tag generator-alist before-effects during-effects extra-opts)
-  (let* ((tagpair (tsh-animstack-parse-tagname (car tag))) ;; (tagname . other opts)
-         (tagname (car tagpair))
-         (opts (apply list (cdr tagpair) generator-alist before-effects during-effects extra-opts))
-         (tag-assoc (*tsh-animstack-action-tag-assocs* 'assoc tagname)))
-    (and tag-assoc
+  (tsh-debugvars "animstack-process-tag: img" img
+                 "layer" layer
+                 "(layer name)" (gimp-item-get-name layer)
+                 "tag" tag
+                 "generator-alist" generator-alist
+                 "before-effects" before-effects
+                 "during-effects" during-effects
+                 "extra-opts" extra-opts)
+  (let* ((tagpair '())
+         (tagname '())
+         (opts '())
+         (tag-assoc '())
+         (ret-vals '()))
+    (tsh-debugvars "tag" tag)
+    (set! tagpair (tsh-animstack-parse-tagname (car tag))) ;; (tagname . other opts)
+    (tsh-debugvars "(car tagpair)" (car tagpair))
+    (set! tagname (car tagpair))
+    (tsh-debugvars "tagname" tagname)
+    (tsh-debugvars "(cdr tagpair)" (cdr tagpair))
+    (set! opts (apply list (cdr tagpair) generator-alist before-effects during-effects extra-opts))
+    (tsh-debugvars "opts" opts)
+    (set! tag-assoc (*tsh-animstack-action-tag-assocs* 'assoc tagname))
+    (tsh-debugvars "tag-assoc" tag-assoc)
+    (tsh-debugvars "(cadr tag-assoc)" (cadr tag-assoc))
+    (tsh-debugvars "(cdr tag)" (cdr tag))
+    (tsh-debugvars "(eqv? (cadr tag-assoc) tsh-animstack-dup-tree)" (eqv? (cadr tag-assoc) tsh-animstack-dup-tree))
+    (set! ret-vals (and tag-assoc
          (or (tsh-check-tag-params (cdr tag) integer?)
              (error "Action tag parameters must be integer"))
-         (apply (cadr tag-assoc) img layer opts (cdr tag)))))
+         (apply (cadr tag-assoc) img layer opts (cdr tag))))
+    (tsh-debugvars "ret-vals" ret-vals)
+    ret-vals))
 
 ;; generators
-;; 
+;;
 ;; a generator processor must return a function with zero parameters
 ;; that returns numeric values when called repeatedly. It's called
 ;; once per frame to generate values for variables
@@ -1121,7 +1152,7 @@ where tag might be #f"
 (define (tsh-animstack-irng params)
   "irng:range"
   (tsh-with-params ((range 10)) (lambda () (random range))))
-  
+
 (define (tsh-float-remainder x period)
   (let ((div (floor (/ x (abs period)))))
     (- x (* (abs period) div))))
@@ -1148,7 +1179,7 @@ where tag might be #f"
    (tsh-generator
     (* amplitude (/ (* 2 *pi*) period) (tsh-sin-normalized (+ (/ x period) phase 0.25)))
     )))
-  
+
 (define (tsh-animstack-inc params)
   "inc:step:init"
   (tsh-with-params
@@ -1221,11 +1252,11 @@ where tag might be #f"
                                alist)))))))))
 
 ;; Effect tags (before and during)
-;; 
+;;
 ;; before [!<tagname>:p1:p2]
 ;; during affects 1 layer [-<range>;<tagname>:p1:p2]
 ;; during affects whole group [=<range>;<tagname>:p1:p2]
-;; 
+;;
 ;; range syntax comma separated list of range designators
 ;; n - executed on nth step
 ;; n- executed after nth step (inclusive)
@@ -1392,8 +1423,8 @@ where tag might be #f"
                         (let* ((split (tsh-string-split (list->string (cdr sl)) #\)))
                                (inside (car split)))
                           (if (and (> (length split) 1)
-                                     (or (equal? inside "combine")
-                                         (equal? inside "replace")))
+                                   (or (equal? inside "combine")
+                                       (equal? inside "replace")))
                               (begin
                                 (if keep-mode
                                     (set! old-mode inside))
@@ -1434,7 +1465,7 @@ where tag might be #f"
                       (corner? (list-ref motion 4))
                       (oldname (car (gimp-item-get-name target)))
                       (newname (tsh-add-frame-delay oldname
-                                                (if corner? corner-delay frame-delay))))
+                                                    (if corner? corner-delay frame-delay))))
                  (gimp-item-set-name target newname))))
          #t)))
 
@@ -1555,7 +1586,7 @@ where tag might be #f"
   ;;add 1px transparent border
   (tsh-animstack-add-margin layer 1)
   (gimp-image-autocrop-selected-layers img layer)
-  
+
   (if (and margin (> margin 0))
       (tsh-animstack-add-margin layer margin)))
 
@@ -1653,7 +1684,7 @@ where tag might be #f"
   "
    @param layer: input drawable
    @param len: length in pixels
-   @param angle: Angle (0 <= angle <= 360)   
+   @param angle: Angle (0 <= angle <= 360)
   "
   (define (fmodulo n d)
     "modulo of n / d (where n and d are float numbers)"
@@ -1670,8 +1701,8 @@ where tag might be #f"
   ;;           length: default: 10.00, minimum: 0.00, maximum: 1000.00
   ;;           angle: default: 0.00, minimum: -180.00, maximum: 180.00
   (gimp-drawable-merge-new-filter layer "gegl:motion-blur-linear" 0 LAYER-MODE-REPLACE 1.0
-    "length" len "angle" (clampTo180 angle))
-)
+                                  "length" len "angle" (clampTo180 angle))
+  )
 ;; In GIMP 2: (plug-in-mblur 1 img layer 2 (abs r) 0 x y)
 ;; (('run-mode', 'The run mode'), ('image', '(unused)'), ('drawable', 'Input drawable'),
 ;; ('type', 'Type of motion blur { LINEAR (0), RADIAL (1), ZOOM (2) } (0 <= type <= 2)'),
@@ -1695,7 +1726,7 @@ where tag might be #f"
               (lw (gimp-drawable-get-width layer))
               (lh (gimp-drawable-get-height layer))
               (iw (gimp-image-get-width image))
-              (ih (gimp-image-get-height image)) 
+              (ih (gimp-image-get-height image))
               (factor (/ stength 1000))
               )
       (set! factor (min 1.0 factor))
@@ -1705,7 +1736,7 @@ where tag might be #f"
       (define (x-iw x) (/ x iw) )
       (define (y-ih x) (/ x ih) )
       (gimp-drawable-merge-new-filter layer "gegl:motion-blur-zoom" 0 LAYER-MODE-REPLACE 1.0
-        "center-x" (x-lw cx) "center-y" (y-lh cy) "factor" factor)
+                                      "center-x" (x-lw cx) "center-y" (y-lh cy) "factor" factor)
       (set! *ssiun-v3* old-v3)
       layer )))
 
@@ -1721,15 +1752,15 @@ where tag might be #f"
       (if (> c_angle 180)
           (+ -180 (fmodulo c_angle 180))
           c_angle)))
-  
+
   (tsh-with-params
    ((dx 0) (dy 0))
    (let ((bp (tsh-descartes-to-blur-params dx dy)))
      (cons (lambda (layer target)
              (if (not (= dx dy 0))
                  (let* ((len (car bp))
-                       (angle (cdr bp)))
-                    (linear_motion_blur layer len angle)
+                        (angle (cdr bp)))
+                   (linear_motion_blur layer len angle)
                    )))
            #f))))
 
@@ -1744,8 +1775,8 @@ where tag might be #f"
                  (let* ((width (car (gimp-drawable-get-width layer)))
                         (height (car (gimp-drawable-get-height layer)))
                         (x (* cx width))
-                        (y (* cy height)))                   
-                        (zoomfn layer (abs r) x y)
+                        (y (* cy height)))
+                   (zoomfn layer (abs r) x y)
                    )))
            #f))))
 
@@ -1759,19 +1790,19 @@ where tag might be #f"
                       (height (car (gimp-drawable-get-height layer)))
                       (x (* cx width))
                       (y (* cy height)))
-                      ;;"gegl:motion-blur-circular"
-                      ;; center-x:double, default: 0.50, minimum: -inf, maximum: +inf
-                      ;; center-y:double, default: 0.50, minimum: -inf, maximum: +inf
-                      ;; angle:double, default: 5.00, minimum: 0.00, maximum: 360.00                        
+                 ;;"gegl:motion-blur-circular"
+                 ;; center-x:double, default: 0.50, minimum: -inf, maximum: +inf
+                 ;; center-y:double, default: 0.50, minimum: -inf, maximum: +inf
+                 ;; angle:double, default: 5.00, minimum: 0.00, maximum: 360.00
                  (gimp-drawable-merge-new-filter layer "gegl:motion-blur-circular" 0 LAYER-MODE-REPLACE 1.0
-                    "center-x" x "center-y" y "angle" (tsh-angle-constraint angle))
+                                                 "center-x" x "center-y" y "angle" (tsh-angle-constraint angle))
                  )))
          #f)))
 
 ;; gaussian blur
 (define (gaussian_blur layer rx ry)
-   (gimp-drawable-merge-new-filter layer "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
-                        "std-dev-x" (* 0.32 rx) "std-dev-y" (* 0.32 ry) "filter" "auto"))
+  (gimp-drawable-merge-new-filter layer "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                  "std-dev-x" (* 0.32 rx) "std-dev-y" (* 0.32 ry) "filter" "auto"))
 
 (define (tsh-animstack-gb img params)
   (tsh-with-params
@@ -2015,20 +2046,23 @@ where tag might be #f"
     (list action-tags generator-tags before-tags during-tags)))
 
 (define (tsh-animstack-process-layer img layer dup-options)
+  (tsh-debugvars "tsh-animstack-process-layer: img" img "layer" layer "dup-options" dup-options)
   (let* ((tags (tsh-sort-animstack-tags (tsh-extract-animstack-tags layer)))
          (action-tags (list-ref tags 0))
          ;; add default inc generator
          (generator-tags (cons '("i=inc") (list-ref tags 1)))
          (before-tags (list-ref tags 2))
-         (during-tags (list-ref tags 3)))
+         (during-tags (list-ref tags 3)))    
+    (tsh-debugvars "layer" layer "[layer's name]:" (gimp-item-get-name layer))
     (if (or (pair? action-tags) (pair? during-tags) dup-options)
-        (let ((generator-alist (tsh-init-generators generator-tags))
+        (let* ((generator-alist (tsh-init-generators generator-tags))
               (before-effects (tsh-process-effect-tags before-tags #t))
               (during-effects (tsh-process-effect-tags during-tags #t)))
           (if dup-options
               (set! generator-alist (append (caddar dup-options) generator-alist)))
           ;; if no action tag, but during tag present, add a simple noop action tag
           (if (null? action-tags) (set! action-tags (list (list "noop"))))
+          (tsh-debugvars "action-tags" action-tags)
           (animstack-process-tag img layer (car action-tags)
                                  generator-alist before-effects during-effects
                                  (if dup-options (list dup-options) '()))))))
@@ -2064,11 +2098,11 @@ where tag might be #f"
 (define tsh-animstack-copy-layer-labels #f)
 
 (let* ((label-hash (tsh-make-animstack-hash '()))
-      (label-tag-symbol
-       (lambda (tag)
-         (if (null? (cdr tag))
-             (string->symbol "")
-             (cadr tag)))))
+       (label-tag-symbol
+        (lambda (tag)
+          (if (null? (cdr tag))
+              (string->symbol "")
+              (cadr tag)))))
   (set! tsh-animstack-reset-labels
         (lambda () (set! label-hash (tsh-make-animstack-hash '()))))
   (set! tsh-animstack-set-layer-labels
@@ -2088,14 +2122,16 @@ where tag might be #f"
   (gimp-image-undo-group-start img)
   (gimp-image-freeze-layers img)
   (let ((layers (car (gimp-image-get-layers img))))
-    ;; make everylayer visible. this is because it might be extremely
-    ;; annoying to make them visible again after everything is jumbled up
+    (tsh-debugmsg 
+        ";; make everylayer visible. this is because it might be extremely\n"
+        ";; annoying to make them visible again after everything is jumbled up\n")
     (tsh-vector-for-each
      (lambda (layer)
-        (gimp-progress-pulse)
-        (gimp-item-set-visible layer TRUE))
+       (gimp-progress-pulse)
+       (gimp-item-set-visible layer TRUE))
      layers)
-    ;; preprocessing: find multiply tags and label tags and execute them
+    (tsh-debugmsg
+      ";; preprocessing: find multiply tags and label tags and execute them\n")
     (tsh-animstack-reset-labels)
     (tsh-vector-for-each
      (lambda (layer)
@@ -2109,20 +2145,23 @@ where tag might be #f"
                (set! layer newlayer)))
          (if (and layer (pair? labeltags)) (tsh-animstack-set-layer-labels layer labeltags))))
      layers))
-  ;; now the main part
+  (tsh-debugmsg ";; now the main part\n")
+  (tsh-debugvars "(gimp-image-get-layers img)" (gimp-image-get-layers img))
+  (tsh-debugvars "(car (gimp-image-get-layers img))" (car (gimp-image-get-layers img)))
   (gimp-context-push)
-  (let ((layers (car (gimp-image-get-layers img))))
+  (let* ((layers (car (gimp-image-get-layers img))))
     (tsh-vector-for-each
      (lambda (layer)
-        (gimp-progress-pulse)
-        (tsh-animstack-process-layer img layer #f))
+       (gimp-progress-pulse)
+       (tsh-debugvars "layer" layer "layer-name" (car (gimp-item-get-name layer)))
+       (tsh-animstack-process-layer img layer #f))
      layers))
   (gimp-context-pop)
   (gimp-image-thaw-layers img)
   (gimp-image-undo-group-end img)
   (gimp-progress-end)
   (gimp-displays-flush))
-  
+
 (define (script-fu-tsh-animstack-process-all-filter InImage InDrawables)
   (tsh-animstack-process-all-layers InImage))
 
@@ -2136,11 +2175,11 @@ where tag might be #f"
  "RGB RGBA GRAY GRAYA" ;; no layer groups in indexed :(
  SF-ONE-OR-MORE-DRAWABLE
  )
- 
- (script-fu-menu-register "script-fu-tsh-animstack-process-all-filter"
-  ;; FOR TRANSLATORS: Don't translate '<Image>/Filters/Animation/'
-  "<Image>/Filters/Animation/Timofei Shatrov")
- (script-fu-register-i18n "script-fu-tsh-animstack-process-all-filter" "Standard")
+
+(script-fu-menu-register "script-fu-tsh-animstack-process-all-filter"
+                         ;; FOR TRANSLATORS: Don't translate '<Image>/Filters/Animation/'
+                         "<Image>/Filters/Animation/Timofei Shatrov")
+(script-fu-register-i18n "script-fu-tsh-animstack-process-all-filter" "Standard")
 
 ;; Layer group helpers (release as a separate script maybe?)
 (define (tsh-walk-layers-recursive img test fn)
@@ -2151,7 +2190,7 @@ where tag might be #f"
              ((tsh-is-true? gimp-item-is-group layer)
               (loop (car (gimp-item-get-children layer))))))
      layers)))
-     
+
 ;; Reverse/Mirror
 
 ;; Note By Ssiun Enuy on April 1, 2023
@@ -2175,10 +2214,10 @@ where tag might be #f"
            (let ((new (car (gimp-layer-copy layer))))
              (gimp-image-insert-layer img new parent 0)))
          (lambda (layer i)
-           (gimp-progress-pulse) 
+           (gimp-progress-pulse)
            (if (< (* 2 i) (- len 1))
                (tsh-animstack-swap-layers img layer
-                                      (vector-ref layers (- len i 1)) parent))))
+                                          (vector-ref layers (- len i 1)) parent))))
      layers)))
 
 (define (tsh-animstack-mirror-layers img parent layers)
@@ -2195,41 +2234,41 @@ where tag might be #f"
 
 
 (define (script-fu-tsh-reverse-mirror-layers img drw mode ignore-tagged)
- (let ((parent (car (gimp-item-get-parent drw)))
-       (layers #f))
-   (cond ((= parent -1)
-          (set! parent 0)
-          (set! layers (car (gimp-image-get-layers img))))
-         (else
-          (set! layers (car (gimp-item-get-children parent)))))
-   (if (= ignore-tagged TRUE)
-       (set! layers (list->vector
-                     (tsh-map-filter (lambda (x) x) (vector->list layers)
-                                 tsh-is-untagged?))))
-   (gimp-image-undo-group-start img)
-   (gimp-image-freeze-layers img)
-   (cond ((= mode 0) (tsh-animstack-reverse-layers img parent layers #f))
-         ((= mode 1) (tsh-animstack-mirror-layers img parent layers)))
-   (gimp-image-thaw-layers img)
-   (gimp-image-undo-group-end img)))
+  (let ((parent (car (gimp-item-get-parent drw)))
+        (layers #f))
+    (cond ((= parent -1)
+           (set! parent 0)
+           (set! layers (car (gimp-image-get-layers img))))
+          (else
+           (set! layers (car (gimp-item-get-children parent)))))
+    (if (= ignore-tagged TRUE)
+        (set! layers (list->vector
+                      (tsh-map-filter (lambda (x) x) (vector->list layers)
+                                      tsh-is-untagged?))))
+    (gimp-image-undo-group-start img)
+    (gimp-image-freeze-layers img)
+    (cond ((= mode 0) (tsh-animstack-reverse-layers img parent layers #f))
+          ((= mode 1) (tsh-animstack-mirror-layers img parent layers)))
+    (gimp-image-thaw-layers img)
+    (gimp-image-undo-group-end img)))
 
 (define (script-fu-tsh-reverse-mirror-layers-filter InImage InDrawables mode ignore-tagged)
- (let* ((img InImage) (drawable (vector-ref InDrawables 0)))
-   (script-fu-tsh-reverse-mirror-layers img drawable mode ignore-tagged)))
+  (let* ((img InImage) (drawable (vector-ref InDrawables 0)))
+    (script-fu-tsh-reverse-mirror-layers img drawable mode ignore-tagged)))
 
 (script-fu-register-filter
-"script-fu-tsh-reverse-mirror-layers-filter"
-_"Reverse OR Mirror layers (T. Shatrov)..."
-_"Reverse or mirror layers at the same level as selected layer"
-"Timofei Shatrov"
-"Copyright 2012"
-"October 11, 2012"
-"RGB RGBA GRAY GRAYA"
-SF-ONE-DRAWABLE
-SF-OPTION _"O_peration" '(_"R_everse" _"_Mirror")
-SF-TOGGLE _"_Ignore tagged layers" FALSE
-)
+ "script-fu-tsh-reverse-mirror-layers-filter"
+ _"Reverse OR Mirror layers (T. Shatrov)..."
+ _"Reverse or mirror layers at the same level as selected layer"
+ "Timofei Shatrov"
+ "Copyright 2012"
+ "October 11, 2012"
+ "RGB RGBA GRAY GRAYA"
+ SF-ONE-DRAWABLE
+ SF-OPTION _"O_peration" '(_"R_everse" _"_Mirror")
+ SF-TOGGLE _"_Ignore tagged layers" FALSE
+ )
 
 (script-fu-menu-register "script-fu-tsh-reverse-mirror-layers-filter"
-  _"<Image>/Image/Timofei Shatrov")
+                         _"<Image>/Image/Timofei Shatrov")
 (script-fu-register-i18n "script-fu-tsh-reverse-mirror-layers-filter" "Standard")
