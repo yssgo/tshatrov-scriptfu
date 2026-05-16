@@ -1089,37 +1089,19 @@ where tag might be #f"
      )))
 
 (define (animstack-process-tag img layer tag generator-alist before-effects during-effects extra-opts)
-  (tsh-debugvars "animstack-process-tag: img" img
-                 "layer" layer
-                 "(layer name)" (gimp-item-get-name layer)
-                 "tag" tag
-                 "generator-alist" generator-alist
-                 "before-effects" before-effects
-                 "during-effects" during-effects
-                 "extra-opts" extra-opts)
   (let* ((tagpair '())
          (tagname '())
          (opts '())
          (tag-assoc '())
          (ret-vals '()))
-    (tsh-debugvars "tag" tag)
     (set! tagpair (tsh-animstack-parse-tagname (car tag))) ;; (tagname . other opts)
-    (tsh-debugvars "(car tagpair)" (car tagpair))
     (set! tagname (car tagpair))
-    (tsh-debugvars "tagname" tagname)
-    (tsh-debugvars "(cdr tagpair)" (cdr tagpair))
     (set! opts (apply list (cdr tagpair) generator-alist before-effects during-effects extra-opts))
-    (tsh-debugvars "opts" opts)
     (set! tag-assoc (*tsh-animstack-action-tag-assocs* 'assoc tagname))
-    (tsh-debugvars "tag-assoc" tag-assoc)
-    (tsh-debugvars "(cadr tag-assoc)" (cadr tag-assoc))
-    (tsh-debugvars "(cdr tag)" (cdr tag))
-    (tsh-debugvars "(eqv? (cadr tag-assoc) tsh-animstack-dup-tree)" (eqv? (cadr tag-assoc) tsh-animstack-dup-tree))
     (set! ret-vals (and tag-assoc
          (or (tsh-check-tag-params (cdr tag) integer?)
              (error "Action tag parameters must be integer"))
          (apply (cadr tag-assoc) img layer opts (cdr tag))))
-    (tsh-debugvars "ret-vals" ret-vals)
     ret-vals))
 
 ;; generators
@@ -2046,14 +2028,12 @@ where tag might be #f"
     (list action-tags generator-tags before-tags during-tags)))
 
 (define (tsh-animstack-process-layer img layer dup-options)
-  (tsh-debugvars "tsh-animstack-process-layer: img" img "layer" layer "dup-options" dup-options)
   (let* ((tags (tsh-sort-animstack-tags (tsh-extract-animstack-tags layer)))
          (action-tags (list-ref tags 0))
          ;; add default inc generator
          (generator-tags (cons '("i=inc") (list-ref tags 1)))
          (before-tags (list-ref tags 2))
          (during-tags (list-ref tags 3)))    
-    (tsh-debugvars "layer" layer "[layer's name]:" (gimp-item-get-name layer))
     (if (or (pair? action-tags) (pair? during-tags) dup-options)
         (let* ((generator-alist (tsh-init-generators generator-tags))
               (before-effects (tsh-process-effect-tags before-tags #t))
@@ -2062,7 +2042,6 @@ where tag might be #f"
               (set! generator-alist (append (caddar dup-options) generator-alist)))
           ;; if no action tag, but during tag present, add a simple noop action tag
           (if (null? action-tags) (set! action-tags (list (list "noop"))))
-          (tsh-debugvars "action-tags" action-tags)
           (animstack-process-tag img layer (car action-tags)
                                  generator-alist before-effects during-effects
                                  (if dup-options (list dup-options) '()))))))
@@ -2121,17 +2100,15 @@ where tag might be #f"
   (srand (realtime))
   (gimp-image-undo-group-start img)
   (gimp-image-freeze-layers img)
-  (let ((layers (car (gimp-image-get-layers img))))
-    (tsh-debugmsg 
-        ";; make everylayer visible. this is because it might be extremely\n"
-        ";; annoying to make them visible again after everything is jumbled up\n")
+  (let ((layers (car (gimp-image-get-layers img))))    
+    ;; make everylayer visible. this is because it might be extremely
+    ;; annoying to make them visible again after everything is jumbled up
     (tsh-vector-for-each
      (lambda (layer)
        (gimp-progress-pulse)
        (gimp-item-set-visible layer TRUE))
      layers)
-    (tsh-debugmsg
-      ";; preprocessing: find multiply tags and label tags and execute them\n")
+    ;; preprocessing: find multiply tags and label tags and execute them
     (tsh-animstack-reset-labels)
     (tsh-vector-for-each
      (lambda (layer)
@@ -2145,15 +2122,12 @@ where tag might be #f"
                (set! layer newlayer)))
          (if (and layer (pair? labeltags)) (tsh-animstack-set-layer-labels layer labeltags))))
      layers))
-  (tsh-debugmsg ";; now the main part\n")
-  (tsh-debugvars "(gimp-image-get-layers img)" (gimp-image-get-layers img))
-  (tsh-debugvars "(car (gimp-image-get-layers img))" (car (gimp-image-get-layers img)))
+  ;; now the main part
   (gimp-context-push)
   (let* ((layers (car (gimp-image-get-layers img))))
     (tsh-vector-for-each
      (lambda (layer)
        (gimp-progress-pulse)
-       (tsh-debugvars "layer" layer "layer-name" (car (gimp-item-get-name layer)))
        (tsh-animstack-process-layer img layer #f))
      layers))
   (gimp-context-pop)
