@@ -1023,16 +1023,13 @@ where tag might be #f"
 (define (tsh-animstack-dup-tree img layer opts . params)
   (tsh-with-params
    ((dir 1))
-   (let* ((group (tsh-groupify-layer img layer))
-          (contents* (let* ((children '()))
-                      (set! children (car (gimp-item-get-children group)))
-                      (list (vector-length children) children)))
-          (contents (vector->list (cadr contents*)))
+   (let* ((group (tsh-groupify-layer img layer))          
+          (contents (vector->list (car (gimp-item-get-children group))))
           (primary #f)
           (dupes #f)
           (position (car (gimp-image-get-item-position img group))))
 
-     (if (= (car contents) 0)
+     (if (= (length contents) 0)
       (begin
         (tsh-gimp-message* "Empty duplicate tree !")
         (error "Empty duplicate tree")))
