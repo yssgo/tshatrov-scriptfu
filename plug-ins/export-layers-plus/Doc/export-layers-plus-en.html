@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+            <html>
+                <head>                    
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+                    <title>export-layers-plus-en.md</title>
+                    <style type="text/css">
+                    /* style.css */
+    body {
+        padding: 20px; 
+        width: 800px; 
+        font-size:1.2em; 
+        color: #000040; 
+        background: #fcfcfc;
+    }
+    body {padding: 1em; margin: 0 auto; font-family: Sans-serif}
+
+    h1, h2, h3, h4{
+        color: #2020A0;
+    }
+
+    h1 {
+        background: #fefefe; 
+        border-style: solid; 
+        border-width: 3px; 
+        border-color: #303080; 
+        border-radius: 8px; 
+        padding-left: 8px;
+    }
+    code { 
+        color: #000000; 
+        background: #fefefe; 
+        border-style: solid; 
+        border-width: 1px; 
+        border-color: #e0e0e0; 
+        border-radius: 2px; 
+        padding-left: 2px;
+        padding-right: 2px;
+        font-family: D2Coding, NanumGothicCoding, ��������ڵ�, "Cascadia Code", Consolas, "SF Mono", "Melono",
+     "Liberation Mono", Monospace, "DejaVu Sans Mono", monospace;
+        font-size:1.1em;
+    }
+
+    pre { 
+        color: #000000; 
+        background: #fffff8; 
+        border-style: solid; 
+        border-width: 1px; 
+        border-color: #c0c0c0; 
+        border-radius: 5px; 
+        padding-top: 8px;
+        padding-bottom: 5px;    
+        padding-left: 8px;
+        padding-right: 8px;
+        font-family:monospace;
+        font-size:110%;
+    }
+
+    pre > code {
+        border-style: none; 
+        background: none;     
+        font-size:none;
+    }
+
+    li {
+        margin: 5px 0;
+    }
+
+    img {
+        border-style: solid; 
+        border-width: 1px; 
+        border-color: #e0e0e0; 
+    }
+
+    p:has(> img) {text-align: center; }
+    p:has(img[src="external_link_icon.svg"]) {text-align: left; }
+    h5 {
+        margin: 10px 0px;
+        padding: 5px 0px 2px;
+    }
+
+    #content p {
+        margin: 5px 0;
+        padding: 0px 0;
+    }
+
+    h5 + p {
+        padding: 0 30px;
+        margin-top: -5px;
+    }
+
+    
+                    </style>
+                </head>
+                <body style="">
+                <p id="0"><a href="export-layers-plus-ko.html">한국어</a></p>
+<h1 id="2">Export Layers Plus</h1>
+<p id="4">Yes, it's yet another export layers script!
+This one is mainly targeted for video editing applications.
+I wrote it because all the other scripts weren't good enough
+for my purposes.</p>
+<p id="9">Script is located in File/Export Layers (scm, by Timofe Shatrov)...</p>
+<h2 id="12">Features</h2>
+<ul id="14">
+<li id="14">Can name output files based on frame counter
+(i.e. &quot;<code>frame_000.png</code>&quot;, &quot;<code>frame_001.png</code>&quot; and so on)</li>
+<li id="16">Can export only visible or only linked layers</li>
+<li id="17">Correctly exports layers with layer masks</li>
+<li id="18">Can export top to bottom or bottom to top</li>
+<li id="19">Can resample to different frame rate
+(and understands frame delay modifiers i.e. &quot;<code>(NNms)</code>&quot;)</li>
+<li id="21">Can also interpolate frames when resampling</li>
+</ul>
+<p id="23">This script was used to produce
+the award winning short film <em>&quot;Stretch Those Glutes (ANNIVERSARY EDITION!)&quot;</em></p>
+<h2 id="27">Options description</h2>
+<ul id="29">
+<li id="29"><p id="29"><strong><code>Output directory</code></strong> - select a directory where to export the files</p>
+</li>
+<li id="30"><p id="30"><strong><code>Filename format</code></strong> - describes how each layer will be named
+when it's exported.</p>
+<p id="33">You can use several formatting directives:</p>
+<ul id="34">
+<li id="34">&quot;%n&quot; inserts image name (usually the filename),</li>
+<li id="35">&quot;<code>%l</code>&quot; inserts layer name (don't use this with resampling enabled),</li>
+<li id="36">&quot;%i&quot; inserts the current counter value.</li>
+</ul>
+<p id="38">You can pad it with zeros so that all numbers have identical width.
+For example &quot;%3i&quot; will produce &quot;000&quot;, &quot;001&quot;, &quot;002&quot; and so on.
+The default filename format uses &quot;%6i&quot;
+which produces image sequences to be imported in Sony Vegas NLE.
+Make sure your filename has an extension.</p>
+</li>
+<li id="43"><p id="43"><strong><code>Walk direction</code></strong> - the direction in which the layers are processed.
+This mostly affects the counter.</p>
+</li>
+<li id="45"><p id="45"><strong><code>Count offset</code></strong> - what number do we start counting from</p>
+</li>
+<li id="46"><p id="46"><strong>Filter</strong> - allows to export only visible or only linked layers</p>
+</li>
+<li id="47"><p id="47"><strong><code>Resample mode</code></strong> - when Off, it just exports the layers.
+However when &quot;<code>No interpolation</code>&quot; or &quot;<code>Use interpolation</code>&quot; is selected,
+it resamples layers to a fixed framerate.
+By default a layer is assumed to last 100ms,
+which can be changed by assigning a delay to a layer via adding &quot;<code>(XXXms)</code>&quot; to its name.
+When exported with resampling, each file represents a fixed amount of time,
+which is set by <strong><code>Frame rate</code></strong> option.
+For each of these periods of time, a layer is chosen to represent it.
+When &quot;<code>Use interpolation</code>&quot; is selected,
+it might sometimes select two layers and average them to produce a transition.</p>
+</li>
+<li id="57"><p id="57"><strong><code>Interpolation threshold</code></strong> - when &quot;<code>Resample mode</code>&quot; is
+&quot;<code>Use interpolation</code>&quot;, this option prevents interpolating
+when only a small part of layer fits into a frame. For example:</p>
+<p id="61"><img src="pVRpVSr.png" alt="pVRpVSr.png" /></p>
+<p id="63">If <code>y</code> is less than interpolation threshold,
+<code>layer 1</code> will be used for <code>frame 2</code> without interpolation.
+Otherwise, <code>frame 2</code> will be an interpolation of <code>layer 1</code> and <code>layer 2</code>.</p>
+</li>
+</ul>
+
+                </body>
+            </html>
+            
