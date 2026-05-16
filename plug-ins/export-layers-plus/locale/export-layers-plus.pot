@@ -1,1 +1,109 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-04 19:58+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
 
+#: export-layers-plus.scm:432
+msgid "Export Layers Plus (scm)..."
+msgstr ""
+
+#: export-layers-plus.scm:433
+msgid "Export layers as separate images (by Timofei Shatrov)"
+msgstr ""
+
+#: export-layers-plus.scm:439
+msgid "Output _directory"
+msgstr ""
+
+#: export-layers-plus.scm:440
+msgid ""
+"File_name format:\n"
+"%n - image name\n"
+"%l - layer name\n"
+"%i - number of layer\n"
+"%6i - padded to 6 digits\n"
+"%% = %"
+msgstr ""
+
+#: export-layers-plus.scm:446
+msgid "_Walk direction"
+msgstr ""
+
+#: export-layers-plus.scm:446
+msgid "Bottom to top"
+msgstr ""
+
+#: export-layers-plus.scm:446
+msgid "Top to bottom"
+msgstr ""
+
+#: export-layers-plus.scm:447
+msgid "Co_unt offset"
+msgstr ""
+
+#: export-layers-plus.scm:448
+msgid "_Filter"
+msgstr ""
+
+#: export-layers-plus.scm:448
+msgid "All layers"
+msgstr ""
+
+#: export-layers-plus.scm:448
+msgid "Visible layers"
+msgstr ""
+
+#: export-layers-plus.scm:448
+msgid "Selected layers"
+msgstr ""
+
+#: export-layers-plus.scm:449
+msgid "Resample _mode"
+msgstr ""
+
+#: export-layers-plus.scm:449
+msgid "Off"
+msgstr ""
+
+#: export-layers-plus.scm:449
+msgid "No interpolation"
+msgstr ""
+
+#: export-layers-plus.scm:449
+msgid "Use interpolation"
+msgstr ""
+
+#: export-layers-plus.scm:450
+msgid "Frame ra_te (ms)"
+msgstr ""
+
+#: export-layers-plus.scm:451
+msgid "_Interpolation threshold (ms)"
+msgstr ""
+
+#. FOR TRANSLATORS: Don't translate '<Image>/File'
+#: export-layers-plus.scm:456 export-layers-plus.scm:485
+msgid "<Image>/File/Export"
+msgstr ""
+
+#: export-layers-plus.scm:474
+msgid "Help for 'Export Layers Plus' (scm)"
+msgstr ""
+
+#: export-layers-plus.scm:475
+msgid "Opens the html document for 'Export Layers Plus'"
+msgstr ""
