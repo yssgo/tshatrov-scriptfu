@@ -65,8 +65,8 @@
 (define (tsh-is-true? fn item)
   ;; does fn return '(TRUE) ?
   (if (not *tsh-v3*)
-      (or (= TRUE (car (fn item))) (equal? #t (car (fn item))))
-      (or (= TRUE (fn item)) (equal? #t (fn item))) ))
+      (or (eqv? TRUE (car (fn item))) (eqv? #t (car (fn item))))
+      (or (eqv? TRUE (fn item)) (eqv? #t (fn item))) ))
 
 (define (tsh-int-round x)
   (inexact->exact (round x)))
@@ -138,7 +138,7 @@
 
 (define (tsh-floating-sel-check-and-anchor floating-sel)
   (let* ((is-floating (car (gimp-layer-is-floating-sel floating-sel))))
-    (if (or (= is-floating TRUE) (= is-floating #t))
+    (if (or (eqv? is-floating TRUE) (eqv? is-floating #t))
         (gimp-floating-sel-anchor floating-sel))))
 
 
@@ -809,6 +809,7 @@ where tag might be #f"
         layer
         (tsh-get-toplevel-parent parent))))
 
+
 (define (tsh-sampler-count-frames-above img layer opts)
   (let* ((reverse_ (cadar opts))
          (tl (list-ref (car opts) 2))
@@ -816,10 +817,10 @@ where tag might be #f"
          (toplevel (tsh-get-toplevel-parent layer))
          (pos (car (gimp-image-get-item-position img toplevel)))
          (layers (car (gimp-image-get-layers img)))
-         (last (- (vector-length layers) 1))
+         (last_ (- (vector-length layers) 1))
          (terminate #f))
     (do ((i pos (+ i (if reverse_ 1 -1))))
-        ((or terminate (< i 0) (> i last)) count)
+        ((or terminate (< i 0) (> i last_)) count)
       (let* ((layer (vector-ref layers i)))
         (if (tsh-is-untagged? layer)
             (set! count (+ count 1)))
@@ -1023,16 +1024,16 @@ where tag might be #f"
 (define (tsh-animstack-dup-tree img layer opts . params)
   (tsh-with-params
    ((dir 1))
-   (let* ((group (tsh-groupify-layer img layer))          
+   (let* ((group (tsh-groupify-layer img layer))
           (contents (vector->list (car (gimp-item-get-children group))))
           (primary #f)
           (dupes #f)
           (position (car (gimp-image-get-item-position img group))))
 
      (if (= (length contents) 0)
-      (begin
-        (tsh-gimp-message* "Empty duplicate tree !")
-        (error "Empty duplicate tree")))
+         (begin
+           (tsh-gimp-message* "Empty duplicate tree !")
+           (error "Empty duplicate tree")))
      (if (> dir 0) (set! contents (reverse contents)))
      (set! primary (car contents))
      (set! dupes (cdr contents))
@@ -1096,9 +1097,9 @@ where tag might be #f"
     (set! opts (apply list (cdr tagpair) generator-alist before-effects during-effects extra-opts))
     (set! tag-assoc (*tsh-animstack-action-tag-assocs* 'assoc tagname))
     (set! ret-vals (and tag-assoc
-         (or (tsh-check-tag-params (cdr tag) integer?)
-             (error "Action tag parameters must be integer"))
-         (apply (cadr tag-assoc) img layer opts (cdr tag))))
+                        (or (tsh-check-tag-params (cdr tag) integer?)
+                            (error "Action tag parameters must be integer"))
+                        (apply (cadr tag-assoc) img layer opts (cdr tag))))
     ret-vals))
 
 ;; generators
@@ -1337,6 +1338,19 @@ where tag might be #f"
           (gimp-layer-resize-to-image-size layer))
         #f))
 
+;; (define (tsh-last lst)
+;;   (if (null? lst)
+;;     '()
+;;     (if (null? (cdr lst))
+;;        (car lst)
+;;        (tsh-last (cdr lst)))))
+
+;; \(last function is not bult-in in GIMP 3
+(define (tsh-last lst)
+  (if (null? lst)
+      '()
+      (list-ref lst (- (length lst) 1))))
+
 (define (tsh-animstack-scatter img params)
   "scatter:mode - mode can be
   <= 0 (default) - moves the layer randomly so it doesn't go outside the borders of the image
@@ -1349,13 +1363,15 @@ where tag might be #f"
    (let* ((image-width (car (gimp-image-get-width img)))
           (image-height (car (gimp-image-get-height img)))
           (ox 0) (oy 0))
-     (let ((selection-bounds (gimp-selection-bounds img)))
-       (if (= (car selection-bounds) TRUE)
+     (let* ((selection-bounds (gimp-selection-bounds img)))
+       (if (or (eqv? (car selection-bounds) TRUE) (eqv? (car selection-bounds) #t))
            (begin
              (set! ox (cadr selection-bounds))
              (set! oy (caddr selection-bounds))
              (set! image-width (- (cadddr selection-bounds) ox))
-             (set! image-height (- (car (last selection-bounds)) oy)))))
+             ;; \(last function is not bult-in in GIMP 3
+             (set! image-height (- (car (tsh-last selection-bounds)) oy)))))
+
      (cons (lambda (layer target)
              (let ((layer-width (car (gimp-drawable-get-width layer)))
                    (layer-height (car (gimp-drawable-get-height layer)))
@@ -2030,11 +2046,11 @@ where tag might be #f"
          ;; add default inc generator
          (generator-tags (cons '("i=inc") (list-ref tags 1)))
          (before-tags (list-ref tags 2))
-         (during-tags (list-ref tags 3)))    
+         (during-tags (list-ref tags 3)))
     (if (or (pair? action-tags) (pair? during-tags) dup-options)
         (let* ((generator-alist (tsh-init-generators generator-tags))
-              (before-effects (tsh-process-effect-tags before-tags #t))
-              (during-effects (tsh-process-effect-tags during-tags #t)))
+               (before-effects (tsh-process-effect-tags before-tags #t))
+               (during-effects (tsh-process-effect-tags during-tags #t)))
           (if dup-options
               (set! generator-alist (append (caddar dup-options) generator-alist)))
           ;; if no action tag, but during tag present, add a simple noop action tag
@@ -2097,7 +2113,7 @@ where tag might be #f"
   (srand (realtime))
   (gimp-image-undo-group-start img)
   (gimp-image-freeze-layers img)
-  (let ((layers (car (gimp-image-get-layers img))))    
+  (let ((layers (car (gimp-image-get-layers img))))
     ;; make everylayer visible. this is because it might be extremely
     ;; annoying to make them visible again after everything is jumbled up
     (tsh-vector-for-each
@@ -2212,7 +2228,7 @@ where tag might be #f"
            (set! layers (car (gimp-image-get-layers img))))
           (else
            (set! layers (car (gimp-item-get-children parent)))))
-    (if (= ignore-tagged TRUE)
+    (if (or (eqv? ignore-tagged TRUE) (eqv? ignore-tagged #t))
         (set! layers (list->vector
                       (tsh-map-filter (lambda (x) x) (vector->list layers)
                                       tsh-is-untagged?))))
