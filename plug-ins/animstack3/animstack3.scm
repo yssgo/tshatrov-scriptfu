@@ -174,7 +174,7 @@
             (gimp-image-undo-group-end img)
             (gimp-progress-end)
             (gimp-displays-flush)))
-    (tsh-set-v3 old-v3)
+    (tsh_set_v3 old-v3)
     retvar))
 
 (define (script-fu-tsh-flatten-layer-groups-filter InImage InDrawables)
