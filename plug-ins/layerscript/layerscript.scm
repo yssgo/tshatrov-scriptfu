@@ -88,7 +88,7 @@ recurses down a layer group even if it passes the test"
          (lambda (layer)
            (if (or (not test) (test layer)) (fn layer))
            (if (is-true? gimp-item-is-group layer)
-               (loop (cadr (gimp-item-get-children layer)))))
+               (loop (car (gimp-item-get-children layer)))))
          layers)))
 
     (define save-selection #f)
