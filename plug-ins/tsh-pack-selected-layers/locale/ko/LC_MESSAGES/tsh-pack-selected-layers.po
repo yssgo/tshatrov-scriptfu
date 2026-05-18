@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-18 20:40+0900\n"
-"PO-Revision-Date: 2026-05-18 20:42+0900\n"
+"POT-Creation-Date: 2026-05-19 06:22+0900\n"
+"PO-Revision-Date: 2026-05-19 06:23+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ko\n"
@@ -18,24 +18,38 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.9\n"
 
-#: tsh-pack-selected-layers.scm:164
+#: tsh-pack-selected-layers.scm:148 tsh-pack-selected-layers.scm:190
 msgid "No layers selected"
 msgstr "선택된 레이어가 없습니다"
 
-#: tsh-pack-selected-layers.scm:200 tsh-pack-selected-layers.scm:210
+#: tsh-pack-selected-layers.scm:251
 msgid "Pack Selected Layers"
 msgstr "선택한 레이어 묶기"
 
-#: tsh-pack-selected-layers.scm:201 tsh-pack-selected-layers.scm:211
+#: tsh-pack-selected-layers.scm:252
 msgid "Put all selected layers in a new layer group"
 msgstr "선택한 모든 레이어를 새 레이어 그룹에 넣기"
 
 #. FOR TRANSLATORS: Don't translate '<Image>/Layer/'
-#: tsh-pack-selected-layers.scm:220
+#: tsh-pack-selected-layers.scm:261 tsh-pack-selected-layers.scm:278
 msgid "<Image>/Layer/Group"
 msgstr "<Image>/Layer/그룹"
 
-#. FOR TRANSLATORS: Don't translate '<Layers>/Layers Menu/'
-#: tsh-pack-selected-layers.scm:223
-msgid "<Layers>/Layers Menu/Group"
-msgstr "<Layers>/Layers Menu/그룹"
+#: tsh-pack-selected-layers.scm:266
+msgid "Copy Selected Layers..."
+msgstr "선택한 레이어 복사..."
+
+#: tsh-pack-selected-layers.scm:267
+msgid "Put duplicates of all selected layers in a new layer group"
+msgstr "선택한 모든 레이어의 복사본을 새로운 레이어 그룹에 넣습니다"
+
+#: tsh-pack-selected-layers.scm:273
+msgid "Insert pack group _above the selected layers"
+msgstr "선택한 레이어 위에 팩 그룹 삽입(_a)"
+
+#: tsh-pack-selected-layers.scm:274
+msgid "_Keep selected status"
+msgstr "선택 상태 유지(_k)"
+
+#~ msgid "<Layers>/Layers Menu/Group"
+#~ msgstr "<Layers>/Layers Menu/그룹"
