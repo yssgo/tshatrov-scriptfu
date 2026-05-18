@@ -179,8 +179,72 @@
           (gimp-image-undo-group-end img)
           (gimp-displays-flush)))))
 
-(define (script-fu-tsh-pack-selected-layers-main-menu img InDrawables)
-  (script-fu-tsh-pack-selected-layers img InDrawables))
+(define (script-fu-tsh-copy-selected-layers img InDrawables insert-above keep-selected-states)
+  (tsh_set_v3 #t)
+  (let* ((group (gimp-group-layer-new img))
+         (pos 0)
+         (selected-layers #()))
+    (set! selected-layers (gimp-image-get-selected-layers img))
+    (if (<= (vector-length selected-layers) 0)
+        (begin
+          (gimp-message _"No layers selected"))
+        (let* ((visible-layers #()))
+          (gimp-image-undo-group-start img)
+          (set! visible-layers (get-visible-layers img))
+          (make-only-selected-layers-visible img img selected-layers)
+          (gimp-image-freeze-layers img)
+          (if (all-has-same-parent selected-layers)
+              (let* ((layer (vector-ref selected-layers 0))
+                     (minpos (gimp-image-get-item-position img layer))
+                     (maxpos minpos)
+                     (parent (gimp-item-get-parent layer)))
+                (for-each
+                  (lambda (layer_)
+                    (let* ((pos (gimp-image-get-item-position img layer_)))
+                      (if (< pos minpos) (set! minpos pos))
+                      (if (> pos maxpos) (set! maxpos pos))))
+                  (vector->list selected-layers))
+                (if (py-True? insert-above)
+                  (gimp-image-insert-layer img group parent minpos)
+                  (gimp-image-insert-layer img group parent (+ maxpos 1))))
+              (if (py-True? insert-above)
+                (gimp-image-insert-layer img group 0 0)
+                (gimp-image-insert-layer img group 0 (+ (vector-length (gimp-image-get-layers imh)) 1))))
+          (gimp-item-set-visible group #f)
+          (define (__walk_fn layer)
+             (catch #f ;;prevent crash on reordering layer group into one of its children
+               (let* ((new (gimp-layer-copy layer)))
+                 (gimp-item-set-visible new #f)
+                 (gimp-item-set-visible layer #f)
+                 (if (member layer (vector->list visible-layers))
+                  (set! visible-layers (ssiun-vector-append visible-layers (vector new))))
+                 (gimp-image-insert-layer img new group pos)
+                 (set! pos (+ pos 1))
+                 (set! visible-layers (ssiun-vector-append visible-layers (vector copied ))))))
+          (define (__walk-layers-recursive img test)
+            (tsh_set_v3 #t)
+            (let loop ((layers (gimp-image-get-layers img)))
+              (tsh-vector-for-each
+               (lambda (layer)
+                 (cond ((test layer)
+                        (__walk_fn layer))
+                       ((tsh-is-true? gimp-item-is-group layer)
+                        (loop (gimp-item-get-children layer)))))
+               layers)))
+          (__walk-layers-recursive
+           img
+           (lambda (layer) (tsh-is-true? gimp-item-get-visible layer)))
+          (gimp-image-thaw-layers img)
+          (if (py-True? keep-selected-states)
+            (gimp-image-set-selected-layers img selected-layers)
+            (gimp-image-set-selected-layers img (vector group)))
+          (for-each
+           (lambda (layer)
+             (gimp-item-set-visible layer #t))
+           (vector->list visible-layers))
+          (gimp-item-set-visible group #t)
+          (gimp-image-undo-group-end img)
+          (gimp-displays-flush)))))
 
 (script-fu-register-filter
  "script-fu-tsh-pack-selected-layers"
@@ -192,23 +256,25 @@
  "RGB RGBA GRAY GRAYA"
  SF-ONE-OR-MORE-DRAWABLE)
 
-(script-fu-register-filter
- "script-fu-tsh-pack-selected-layers-main-menu"
- _"Pack Selected Layers"
- _"Put all selected layers in a new layer group"
- "Timofei Shatrov"
- "Copyright 2012"
- "June 27, 2012"
- "RGB RGBA GRAY GRAYA"
- SF-ONE-OR-MORE-DRAWABLE)
-
-(script-fu-menu-register "script-fu-tsh-pack-selected-layers-main-menu"
+(script-fu-menu-register "script-fu-tsh-pack-selected-layers"
                          ;; FOR TRANSLATORS: Don't translate '<Image>/Layer/'
                          _"<Image>/Layer/Group")
-(script-fu-register-i18n "script-fu-tsh-pack-selected-layers-main-menu" "Standard")
-
-(script-fu-menu-register "script-fu-tsh-pack-selected-layers"
-                         ;; FOR TRANSLATORS: Don't translate '<Layers>/Layers Menu/'
-                         _"<Layers>/Layers Menu/Group")
 (script-fu-register-i18n "script-fu-tsh-pack-selected-layers" "Standard")
+
+(script-fu-register-filter
+ "script-fu-tsh-copy-selected-layers"
+ _"Copy Selected Layers..."
+ _"Put duplicates of all selected layers in a new layer group"
+ "Timofei Shatrov"
+ "Copyright 2012"
+ "June 29, 2012"
+ "RGB RGBA GRAY GRAYA"
+ SF-ONE-OR-MORE-DRAWABLE
+ SF-TOGGLE _"Insert pack group _above the selected layers" #f
+ SF-TOGGLE _"_Keep selected status" #f)
+
+(script-fu-menu-register "script-fu-tsh-copy-selected-layers"
+                         ;; FOR TRANSLATORS: Don't translate '<Image>/Layer/'
+                         _"<Image>/Layer/Group")
+(script-fu-register-i18n "script-fu-tsh-copy-selected-layers" "Standard")
 
