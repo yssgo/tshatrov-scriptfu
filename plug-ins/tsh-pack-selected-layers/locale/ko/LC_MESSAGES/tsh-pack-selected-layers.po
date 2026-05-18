@@ -1,1 +1,41 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-18 20:40+0900\n"
+"PO-Revision-Date: 2026-05-18 20:42+0900\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.9\n"
 
+#: tsh-pack-selected-layers.scm:164
+msgid "No layers selected"
+msgstr "선택된 레이어가 없습니다"
+
+#: tsh-pack-selected-layers.scm:200 tsh-pack-selected-layers.scm:210
+msgid "Pack Selected Layers"
+msgstr "선택한 레이어 묶기"
+
+#: tsh-pack-selected-layers.scm:201 tsh-pack-selected-layers.scm:211
+msgid "Put all selected layers in a new layer group"
+msgstr "선택한 모든 레이어를 새 레이어 그룹에 넣기"
+
+#. FOR TRANSLATORS: Don't translate '<Image>/Layer/'
+#: tsh-pack-selected-layers.scm:220
+msgid "<Image>/Layer/Group"
+msgstr "<Image>/Layer/그룹"
+
+#. FOR TRANSLATORS: Don't translate '<Layers>/Layers Menu/'
+#: tsh-pack-selected-layers.scm:223
+msgid "<Layers>/Layers Menu/Group"
+msgstr "<Layers>/Layers Menu/그룹"
