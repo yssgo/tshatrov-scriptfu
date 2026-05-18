@@ -11,9 +11,11 @@
 ;;; +-----------------------------+
 ;;; | MODIFICATION HISTORY        |
 ;;; +-----------------------------+
+;;; 2026-05-19: Added tsh-copy-selected-layers  -- Sensu Iun
 ;;; 2026-05-18: Changed pack-linked-layers to tsh-pack-selected-layers
-;;;             as layer 'linked' state is gone in Gimp 3 -- Sensu Iun
+;;;             as layer 'linked' state is gone in Gimp 3.
 ;;;             Made tsh-pack-selected-layers a separate plugin.
+;;;             -- Sensu Iun
 
 ;;; (load (string-append gimp-directory "\\" "plug-ins\\tsh-pack-selected-layers\\ssiun-utils-v2v3.scm"))
 
