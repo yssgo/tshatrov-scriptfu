@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-18 20:40+0900\n"
+"POT-Creation-Date: 2026-05-19 06:22+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,24 +17,35 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: tsh-pack-selected-layers.scm:164
+#: tsh-pack-selected-layers.scm:148 tsh-pack-selected-layers.scm:190
 msgid "No layers selected"
 msgstr ""
 
-#: tsh-pack-selected-layers.scm:200 tsh-pack-selected-layers.scm:210
+#: tsh-pack-selected-layers.scm:251
 msgid "Pack Selected Layers"
 msgstr ""
 
-#: tsh-pack-selected-layers.scm:201 tsh-pack-selected-layers.scm:211
+#: tsh-pack-selected-layers.scm:252
 msgid "Put all selected layers in a new layer group"
 msgstr ""
 
 #. FOR TRANSLATORS: Don't translate '<Image>/Layer/'
-#: tsh-pack-selected-layers.scm:220
+#: tsh-pack-selected-layers.scm:261 tsh-pack-selected-layers.scm:278
 msgid "<Image>/Layer/Group"
 msgstr ""
 
-#. FOR TRANSLATORS: Don't translate '<Layers>/Layers Menu/'
-#: tsh-pack-selected-layers.scm:223
-msgid "<Layers>/Layers Menu/Group"
+#: tsh-pack-selected-layers.scm:266
+msgid "Copy Selected Layers..."
+msgstr ""
+
+#: tsh-pack-selected-layers.scm:267
+msgid "Put duplicates of all selected layers in a new layer group"
+msgstr ""
+
+#: tsh-pack-selected-layers.scm:273
+msgid "Insert pack group _above the selected layers"
+msgstr ""
+
+#: tsh-pack-selected-layers.scm:274
+msgid "_Keep selected status"
 msgstr ""
