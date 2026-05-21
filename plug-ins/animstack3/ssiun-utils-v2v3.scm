@@ -39,11 +39,20 @@
 ;; define-with-return             : (gimp3)init.scm, (gimp2)script-fu.init
 ;; return                         : (gimp3)init.scm, (gimp2)script-fu.init
 
+;;    (rand n) returns 0 to n-1 in GIMP 2.8
+;;    (rand n) returns 1 to n in GIMP 2.10
+;;    ;; ** (rand n) is removed in Gimp 3.0 **
+;;    (random n) returns 1 to n in GIMP 2.8, GIMP 2.10 and GIMP 3.0
 
 ;; +----------------------------------------------------------------------+
 ;; | YOU SHOULD (set! *ssiun-v3* #t) after (script-fu-use-v3)             |
 ;; | AND (set! *ssiun-v3* #f) after (script-fu-use-v2)                    |
 ;; +----------------------------------------------------------------------+
+
+;;; Change Log:
+;;; 2026-05-21 : fixed the bug that ssiun-random-uniform returns a number greater than maxval
+;;; 2026-05-21 : added ssiun-rand-int
+
 (define *ssiun-v3* #f)
 
 
@@ -553,11 +562,16 @@
                     vector-object 0 num-points (list->vector controlpoints) TRUE))) ) )
     (list vector-object stroke-id)))
 
+(define (ssiun-rand-int minN maxN)
+  "minN and maxN are zero or positive integers"
+  (+ (random (- maxN minN -1)) minN -1))
+
 (define (ssiun-random-uniform minval maxval)
+ "minN and maxN are real numbers"
   (let* ((maxT (* maxval 1000))
          (minT (* minval 1000))
-         (cntT (- maxT minT -1))
-         (rndT (+ (random cntT) minT))
+         (cntT (inexact->exact (round (- maxT minT -1))))
+         (rndT (+ (- (random cntT) 1) minT))
          )
   (/ rndT 1000.0)))
 
