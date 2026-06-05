@@ -1730,41 +1730,13 @@ where tag might be #f"
       (define (y-lh x) (/ x lh) )
       (define (x-iw x) (/ x iw) )
       (define (y-ih x) (/ x ih) )
-      
-      ;;(gimp-drawable-merge-new-filter layer
-      ;;                                "gegl:motion-blur-zoom" 0 LAYER-MODE-REPLACE 1.0
-      ;;                                "center-x" (x-lw cx)
-      ;;                                "center-y" (y-lh cy)
-      ;;                                "factor" factor)
-      (let* ((filter (gimp-drawable-filter-new layer "gegl:motion-blur-zoom" "mbz"))
-             (layerW (gimp-drawable-get-width layer))
-             (layerH (gimp-drawable-get-height layer))
-             (layerXY (gimp-drawable-get-offsets layer))
-             (layerX (car layerXY)) (layerY (cadr layerXY))
-             (layerW2 0)
-             (layerH2 0)
-             (layerXY2 '())
-             (layerX2 0) (layerY2 0))
-        (gimp-drawable-filter-configure filter
-                                        LAYER-MODE-REPLACE 1.0
-                                        "center-x" (x-lw cx)
-                                        "center-y" (y-lh cy)
-                                        "factor" factor)
-        ;; gimp-drawable-append-filter or gimp-drawable-merge-filter
-        (gimp-drawable-merge-filter layer filter)
-        (set! layerW2 (gimp-drawable-get-width layer))
-        (set! layerH2 (gimp-drawable-get-height layer))
-        (set! layerXY2 (gimp-drawable-get-offsets layer))
-        (set! layerX2 (car layerXY2))
-        (set! layerY2 (cadr layerXY2))        
-        (gimp-layer-resize layer layerW layerH
-                           (- layerX2 layerX)
-                           (- layerY2 layerY)))
+      (gimp-drawable-merge-new-filter layer "gegl:motion-blur-zoom" 0 LAYER-MODE-REPLACE 1.0
+                                      "center-x" (x-lw cx) "center-y" (y-lh cy) "factor" factor)
       (set! *ssiun-v3* old-v3)
       layer )))
 
 (define (zoom_motion_blur_inward layer stength cx cy)
-  (zoom_motion_blur layer (* -1 stength) cx cy))
+  (zoom_motion_blur layer (- stength) cx cy))
 
 ;; motion blur
 (define (tsh-animstack-mb img params)
