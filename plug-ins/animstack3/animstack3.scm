@@ -2,6 +2,12 @@
 ;;; -*- coding: utf-8 -*-
 ;;;!# Close comment started on first line. Needed by gettext.
 
+;;; +--------------------------------------+
+;;; | MODIFICATION HISTORY                 |
+;;; +--------------------------------------+
+;;; 2026-06-07: Fixed bugs of blur effect tags ([-zb](zoom blur), etc) -- SSiun
+;;; 2026-05-06: Revised for GIMP 3.2.4 -- by SSiun
+
 ;;; GIMP Animation Tools
 ;;; by Timofei Shatrov
 ;;; v. 0.64
