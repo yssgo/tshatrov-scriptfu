@@ -1716,7 +1716,7 @@ where tag might be #f"
   "
   (let* ((old-v3 *ssiun-v3*) (blur-length ))
     (script-fu-use-v3)
-    (set! *ssiun-v3* #f)
+    (set! *ssiun-v3* #t)
     (let*  (  (image (gimp-item-get-image layer))
               (lw (gimp-drawable-get-width layer))
               (lh (gimp-drawable-get-height layer))
