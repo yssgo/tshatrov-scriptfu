@@ -5,6 +5,7 @@
 ;;; +--------------------------------------+
 ;;; | MODIFICATION HISTORY                 |
 ;;; +--------------------------------------+
+;;; 2026-06-22: Added color argument(new in GIMP 3) to gimp-drawable-offset in animstack-offset -- SSiun
 ;;; 2026-06-07: Fixed bugs of blur effect tags ([-zb](zoom blur), etc) -- SSiun
 ;;; 2026-05-06: Revised for GIMP 3.2.4 -- by SSiun
 
@@ -1289,7 +1290,9 @@ where tag might be #f"
                  (let ((height (car (gimp-drawable-get-height (car layers)))))
                    (set! yy (random-float height))))
              (for-each (lambda (layer)
-                         (gimp-drawable-offset layer wrap 1 xx yy))
+                         ;; IN GIMP 2: (gimp-drawable-offset layer wrap 1 xx yy)
+                         (let* ((fill-type OFFSET-TRANSPARENT) (color '(0 0 0 0)))
+                          (gimp-drawable-offset layer wrap fill-type color xx yy)))
                        layers)))
          #t)))
 
