@@ -1,5 +1,5 @@
 #!/usr/bin/env gimp-script-fu-interpreter-3.0
-;;; -*- coding: utf-8 -*-
+;;; -*- encoding: utf-8 -*-
 ;;;!# Close comment started on first line. Needed by gettext.
 
 ;;; +--------------------------------------+
