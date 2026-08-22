@@ -1,3 +1,4 @@
+;;; -*- coding: utf-8 -*-
 ;;; GIMP Animation Tools
 ;;; by Timofei Shatrov
 ;;; v. 0.64
@@ -111,6 +112,7 @@
 (define (flatten-layer-groups img)
   "Flatten all layer groups in an image"
   (gimp-image-undo-group-start img)
+  (gimp-image-freeze-layers img)
   (let* ((get-layers (gimp-image-get-layers img))
          (layers (cadr get-layers))
          (visi-status (make-vector (car get-layers)))
@@ -136,6 +138,7 @@
        (gimp-item-set-visible layer (vector-ref visi-status i))
        (set! i (+ i 1)))
      (cadr (gimp-image-get-layers img))))
+  (gimp-image-thaw-layers img)
   (gimp-image-undo-group-end img)
   (gimp-displays-flush))
 
@@ -143,8 +146,8 @@
 
 (script-fu-register
  "script-fu-flatten-layer-groups"
- "Flatten Layer Groups"
- "Flattens all layer groups in an image"
+ _"Flatten Layer Groups"
+ _"Flattens all layer groups in an image"
  "Timofei Shatrov"
  "Copyright 2012"
  "June 15, 2012"
@@ -766,7 +769,7 @@ where tag might be #f"
   (set! animstack-set-motion (lambda (new-motion) (set! motion new-motion))))
 
 (define (sampler-action img temp-layer source path
-                            pos opts roll-mode)
+                        pos opts roll-mode)
   (let* ((roll-list (if (>= roll-mode 0)
                         (get-roll-layer-list source)
                         (list source)))
@@ -1936,6 +1939,7 @@ where tag might be #f"
 (define (animstack-process-all-layers img)
   (srand (realtime))
   (gimp-image-undo-group-start img)
+  (gimp-image-freeze-layers img)
   (let ((layers (cadr (gimp-image-get-layers img))))
     ;; make everylayer visible. this is because it might be extremely
     ;; annoying to make them visible again after everything is jumbled up
@@ -1962,6 +1966,7 @@ where tag might be #f"
      (lambda (layer) (animstack-process-layer img layer #f))
      layers))
   (gimp-context-pop)
+  (gimp-image-thaw-layers img)
   (gimp-image-undo-group-end img)
   (gimp-displays-flush))
 
@@ -1969,8 +1974,8 @@ where tag might be #f"
 
 (script-fu-register
  "script-fu-animstack-process-all"
- "Process AnimStack tags"
- "Process all AnimStack tags"
+ _"Process AnimStack tags"
+ _"Process all AnimStack tags"
  "Timofei Shatrov"
  "Copyright 2012-2016"
  "April 13, 2016"
@@ -2001,6 +2006,7 @@ where tag might be #f"
 
 (define (script-fu-pack-linked-layers img drw)
   (gimp-image-undo-group-start img)
+  (gimp-image-freeze-layers img)
   (let ((group (car (gimp-layer-group-new img)))
         (pos 0))
     (insert-layer-above-selected img group)
@@ -2012,11 +2018,13 @@ where tag might be #f"
                 (gimp-image-reorder-item img layer group pos)
                 (set! pos (+ pos 1))
                 (gimp-item-set-linked layer FALSE))))))
+  (gimp-image-thaw-layers img)
   (gimp-image-undo-group-end img)
   (gimp-displays-flush))
 
 (define (script-fu-copy-linked-layers img drw)
   (gimp-image-undo-group-start img)
+  (gimp-image-freeze-layers img)
   (let ((group (car (gimp-layer-group-new img)))
         (pos 0))
     (insert-layer-above-selected img group)
@@ -2027,6 +2035,7 @@ where tag might be #f"
        (let ((new (car (gimp-layer-copy layer FALSE))))
          (gimp-image-insert-layer img new group pos)
          (set! pos (+ pos 1))))))
+  (gimp-image-thaw-layers img)
   (gimp-image-undo-group-end img)
   (gimp-displays-flush))
 
@@ -2034,6 +2043,7 @@ where tag might be #f"
   (if (is-true? gimp-item-is-group group)
       (begin
         (gimp-image-undo-group-start img)
+        (gimp-image-freeze-layers img)
         (let ((layers (cadr (gimp-item-get-children group)))
               (parent (car (gimp-item-get-parent group)))
               (pos (car (gimp-image-get-item-position img group))))
@@ -2044,13 +2054,14 @@ where tag might be #f"
              (set! pos (+ pos 1)))
            layers))
         (gimp-image-remove-layer img group)
+        (gimp-image-thaw-layers img)
         (gimp-image-undo-group-end img)
         (gimp-displays-flush))))
 
 (script-fu-register
  "script-fu-pack-linked-layers"
- "Pack Linked Layers"
- "Put all linked layers in a new layer group"
+ _"Pack Linked Layers"
+ _"Put all linked layers in a new layer group"
  "Timofei Shatrov"
  "Copyright 2012"
  "June 27, 2012"
@@ -2061,8 +2072,8 @@ where tag might be #f"
 
 (script-fu-register
  "script-fu-copy-linked-layers"
- "Copy Linked Layers"
- "Put duplicates of all linked layers in a new layer group"
+ _"Copy Linked Layers"
+ _"Put duplicates of all linked layers in a new layer group"
  "Timofei Shatrov"
  "Copyright 2012"
  "June 29, 2012"
@@ -2073,8 +2084,8 @@ where tag might be #f"
 
 (script-fu-register
  "script-fu-unpack-layer-group"
- "Unpack Layer Group"
- "Put all layers in a layer group outside of that group"
+ _"Unpack Layer Group"
+ _"Put all layers in a layer group outside of that group"
  "Timofei Shatrov"
  "Copyright 2012"
  "June 27, 2012"
@@ -2134,22 +2145,24 @@ where tag might be #f"
                       (map-filter (lambda (x) x) (vector->list layers)
                                   is-untagged?))))
     (gimp-image-undo-group-start img)
+    (gimp-image-freeze-layers img)
     (cond ((= mode 0) (animstack-reverse-layers img parent layers #f))
           ((= mode 1) (animstack-mirror-layers img parent layers)))
+    (gimp-image-thaw-layers img)
     (gimp-image-undo-group-end img)))
 
 (script-fu-register
  "script-fu-reverse-mirror-layers"
- "Reverse/Mirror layers..."
- "Reverse or mirror layers at the same level as selected layer"
+ _"Reverse/Mirror layers..."
+ _"Reverse or mirror layers at the same level as selected layer"
  "Timofei Shatrov"
  "Copyright 2012"
  "October 11, 2012"
  ""
  SF-IMAGE     "Image to use"       0
  SF-DRAWABLE  "Current layer"      0
- SF-OPTION "Operation" '("Reverse" "Mirror")
- SF-TOGGLE "Ignore tagged layers" 0
+ SF-OPTION _"Operation" '(_"Reverse" _"Mirror")
+ SF-TOGGLE _"Ignore tagged layers" 0
  )
 
 (script-fu-menu-register "script-fu-reverse-mirror-layers" "<Image>/Image")
