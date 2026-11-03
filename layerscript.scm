@@ -65,12 +65,20 @@ exception as of GIMP 2.8. Returns #f if not a number."
       ((0) 1)
       ((1) 3))))
 
+(define (is-gimpver-lessthan major minor)
+  (let* ( (gimpver (string-split (car (gimp-version)) #\.))
+          (gimpmajor (string->number (car gimpver)))
+          (gimpminor (string->number (cadr gimpver))))
+    (or (< gimpmajor major) (and (= gimpmajor major) (< gimpminor minor)))))
+
 (define (make-image-sized-layer img name)
   (car (gimp-layer-new img
                        (car (gimp-image-width img))
                        (car (gimp-image-height img))
                        (get-layer-type img)
-                       name 100 0)))
+                       name
+                       100
+                       (if (is-gimpver-lessthan 2 10) 0 LAYER-MODE-NORMAL))))
 
 (define (walk-layers-recursive-full img test fn)
   "different from walk-layers-recursive from animstack.scm in that it
