@@ -29,8 +29,8 @@ LayerScript
 ### 설치
 
 layerscript.scm 을 GIMP 2.10의 스크립트 폴더 중 하나에 저장.
-- 김프 2.10의 사용자용 기본 플러그인 폴더
-  - `%APPDATA%\GIMP\2.10\plug-ins`
+- 김프 2.10의 사용자용 기본 스크립트 폴더
+  - `%APPDATA%\GIMP\2.10\scripts`
 
 ### 설명
 
