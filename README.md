@@ -50,7 +50,9 @@ layerscript.scm 을 GIMP 2.10의 스크립트 폴더 중 하나에 저장.
 
 **예시 이미지**
 
-![예시 이미지](./images/LayerScript-test.png)
+![예시 이미지](images/LayerScript-test.png)
+
+![예시 이미지](https://github.com/yssgo/tshatrov-scriptfu/blob/gimp-2.10/images/LayerScript-test.png)
 
 | 예시 이미지의 레이어
 | -
