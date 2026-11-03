@@ -2,53 +2,21 @@
 ;;; -*- coding: utf-8 -*-
 ;;; ;!# Close comment started on first line. Needed by gettext.
 
-;;; 2025-11-14: Changed Meun location to <Image>/Filters/Script-Fu -- Sensu Iun
+;;; 2026-11-03: Changed some incorrect codes in GIMP 3.2.6
+;;; 2025-11-14: Changed Menu location to <Image>/Filters/Script-Fu -- Sensu Iun
 ;;; 2025-11-14: Modified for GIMP 3.0.6 -- Sensu Iun
 
 ;;; LayerScript - persistent layer effects for GIMP
 ;;; v. 0.2
 
-;;; # script-fu: (realtime)
-;;; import time
-;;; START_PERFORMANCE_COUNT = time.perf_counter()
-;;; def realtime()->int:
-;;;     return int(time.perf_counter() - START_PERFORMANCE_COUNT)
-;;;
-;;; realtime()
-;;;
-;;; # scheme: (eq? fn gimp-selection-bounds)
-;;; def eq(fn something):
-;;;     return id(fn) == id(something)
-(load (string-append gimp-directory "\\" "plug-ins\\layerscript\\ssiun-utils-v2v3.scm"))
-(define *tsh-debug* #t)
-(define *tsh-v3* #f)
-(define (tsh_get_v3) *tsh-v3*)
-(define (tsh_set_v3 enable)
-  (if (or (eqv? enable #t) (eqv? enable TRUE))
-      (begin
-        (script-fu-use-v3)
-        (set! *ssiun-v3* #t)
-        (set! *tsh-v3* #t))
-      (begin
-        (script-fu-use-v2)
-        (set! *ssiun-v3* #f)
-        (set! *tsh-v3* #f))))
-
-(define (tsh-debugvars . args )
-  (if *tsh-debug*
-      (apply ssiun-errmsgln-vars* args)))
-
-(define (tsh-debugmsg . args )
-  (if *tsh-debug*
-      (apply ssiun-errmsgln* args)))
-
 (define lscr
-  (make-environment    
+  (make-environment
+
     ;; library of useful functions (mostly from animstack)
-    
+
     (define (string2number str . opt)
       "Replacement for string->number, which throws an uncatchable
-exception as of GIMP 2.8. Returns #f if not a number."
+    exception as of GIMP 2.8. Returns #f if not a number."
       (let ((s2a (string->atom str))
             (fn (if (pair? opt) (car opt) number?)))
         (and (fn s2a) s2a)))
@@ -68,9 +36,10 @@ exception as of GIMP 2.8. Returns #f if not a number."
         (fn (vector-ref vec i) i)))
 
     (define (is-true? fn item)
-      ;; does fn return #t ?
-      (tsh_set_v3 #t)
-      (if (not (eq? fn gimp-selection-bounds))
+      ;; does fn return #t ? ; '(TRUE) WHEN SCRIPT-FU V2 WAS USED
+
+      ;;; (= (car (fn item)) TRUE) ; WHEN SCRIPT-FU V2 WAS USED
+      (if (not (eq? fn gimp-selection-bounds)) ; Under SCRIPTT-FU V3
           (fn item)
           (car (fn item))))
 
@@ -84,13 +53,13 @@ exception as of GIMP 2.8. Returns #f if not a number."
             (angle (/ (* *pi* angle) 180)))
         (cons (* len (sin angle)) (- (* len (cos angle))))))
 
-    (define (string-split string_ char)
+    (define (string-split string char)
       (let ((res (list)))
-        (do ((i (string-length string_) (- i 1))
+        (do ((i (string-length string) (- i 1))
              (chunk (list))
-             (new (lambda (chunk_) (cons (list->string chunk_) res))))
+             (new (lambda (chunk) (cons (list->string chunk) res))))
             ((<= i 0) (new chunk))
-          (let ((chr (string-ref string_ (- i 1))))
+          (let ((chr (string-ref string (- i 1))))
             (if (char=? chr char)
                 (begin (set! res (new chunk)) (set! chunk (list)))
                 (set! chunk (cons chr chunk)))))))
@@ -103,48 +72,46 @@ exception as of GIMP 2.8. Returns #f if not a number."
       (let ((len (length lst)))
         (and (< -1 n len) (list-ref lst n))))
 
-    (define (get-layer-type img)
-      (tsh_set_v3 #t)
-      (let* ((base-type (gimp-image-get-base-type img)))
-        (cond
-          ((= base-type RGB) RGBA-IMAGE)
-          ((= base-type GRAY) GRAYA-IMAGE))))
-    
-    (define (make-image-sized-layer img name)
-      (tsh_set_v3 #t)
-      (let* ((image img) (name name)
-             (width (gimp-image-get-width img))
-             (height (gimp-image-get-height img))
-             (type (get-layer-type img)) (opacity 100.0) (mode LAYER-MODE-NORMAL))
-        (tsh-debugvars "gimp-layer-new: image" image "name" name
-                       "width" width "height" height
-                       "type" type "opacity" opacity "mode" mode))      
+    (define (get-new-layer-type img) ; (script-fu-use-v3)
+      (let* (
+            ;; (base-type (car (gimp...))) WITH SCRIPT-FU V2
+            (base-type (gimp-image-get-base-type img)) ; Under Script-Fu V3
+            (new-layer-type (+ (* base-type 2) 1))
+        )
+        (set! new-layer-type 
+          ;; (case base-type ((0) 1) ((1) 3)) ; varialbe name cannot be used with (case ...) 
+          (cond
+            ((= base-type RGB) RGBA-IMAGE)
+            ((= base-type GRAY) GRAYA-IMAGE)
+            ))
+        (ssiun-displayln-vars* "base-type" base-type "new-layer-type" new-layer-type)
+        new-layer-type))
+
+    (define (make-image-sized-layer img name) ; (scirpt-fu-use-v3)
+      ;; (car (gimp... )) WITH SCRIPT-FU V2
       (gimp-layer-new img
                       name
-                      (gimp-image-get-width img)
-                      (gimp-image-get-height img)
-                      (get-layer-type img)
+                      (gimp-image-get-width img) ; (car (gimp...)) WITH SCRIPT-FU V2
+                      (gimp-image-get-height img) ; (car (gimp...)) WITH SCRIPT-FU V2
+                      (get-new-layer-type img)
                       100.0
-                      LAYER-MODE-NORMAL)
-      (tsh-debugvars )
-      (gimp-layer-new img
-                      name
-                      (gimp-image-get-width img)
-                      (gimp-image-get-height img)
-                      (get-layer-type img)
-                      100.0
-                      LAYER-MODE-NORMAL))
+                      LAYER-MODE-NORMAL ; This was 0(LAYER-MODE-NORMAL-LEGACY)
+                      ))
 
     (define (walk-layers-recursive-full img test fn)
       "different from walk-layers-recursive from animstack.scm in that it
-recurses down a layer group even if it passes the test"
-      (tsh_set_v3 #t)
-      (let loop ((layers (gimp-image-get-layers img)))
+    recurses down a layer group even if it passes the test"
+      (let loop (
+                  (layers (gimp-image-get-layers img)) ; (layers (car (gimp...))) WITH SCRIPT-FU V2
+                )
         (vector-for-each
          (lambda (layer)
            (if (or (not test) (test layer)) (fn layer))
            (if (is-true? gimp-item-is-group layer)
-               (loop (gimp-item-get-children layer))))
+               (loop 
+                (gimp-item-get-children layer) ; (cadr (gimp...)) WITH SCRIPT-FU V2
+               )
+               ))
          layers)))
 
     (define save-selection #f)
@@ -152,12 +119,13 @@ recurses down a layer group even if it passes the test"
     (define rollback-selection #f)
 
     (let* ((sel '()))
-      (tsh_set_v3 #t)
       (set! save-selection
             (lambda (img)
               (let ((sel-new #f))
                 (if (is-true? gimp-selection-bounds img)
-                    (set! sel-new (gimp-selection-save img)))
+                    (set! sel-new 
+                      (gimp-selection-save img) ; (car (gimp...)) WITH SCRIPT-FU V2
+                    ))
                 (set! sel (cons sel-new sel)))))
 
       (set! rollback-selection
@@ -194,8 +162,8 @@ recurses down a layer group even if it passes the test"
 
     ;; end library
 
-    (define (parse-layerscript-tag string_)
-      (let* ((split1 (string-split string_ #\}))
+    (define (parse-layerscript-tag string)
+      (let* ((split1 (string-split string #\}))
              (tagstr (substring (car split1) 1 (string-length (car split1)))))
         (if (> (length split1) 1)
             (let* ((split2 (string-split tagstr #\|))
@@ -204,8 +172,9 @@ recurses down a layer group even if it passes the test"
             (cons #f (string-length string)))))
 
     (define (extract-layerscript-tags layer . params)
-      (tsh_set_v3 #t)      
-      (let loop ((layer-name-as-list (string->list (gimp-item-get-name layer))))
+      (let loop ((layer-name-as-list (string->list 
+                                      (gimp-item-get-name layer) ; (car (gimp...)) WITH SCRIPT-FU V2
+                                     )))
         (let ((tagtail (memv #\{ layer-name-as-list)))
           (if tagtail
               (let* ((parsed (parse-layerscript-tag (list->string tagtail)))
@@ -235,26 +204,34 @@ recurses down a layer group even if it passes the test"
 
     (define (get-parasite item name)
       "returns #f when not found"
-      (tsh_set_v3 #t)
-      (let ((plist (gimp-item-get-parasite-list item)))
+      (let (
+              (plist (gimp-item-get-parasite-list item)) ; (plist (car (...))) WITH SCRIPT-FU V2
+        )
         (and (member name plist)
-             (gimp-item-get-parasite item name))))
+             (gimp-item-get-parasite item name) ; (car (gimp...)) WITH SCRIPT-FU V2
+             )))
 
     (define (set-parasite item name value)
-      (tsh_set_v3 #t)
       (gimp-item-attach-parasite item (list name 3 value)))
 
     (define (remove-parasite item name)
-      (tsh_set_v3 #t)
-      (let* ((plist (gimp-item-get-parasite-list item)))
+      ;; item: gimp.Layer
+      ;; name : str. f_("*parasite-color-prefix*-{n}")
+      (let* (
+              ;; plist: list[str]
+              ;; (plist (car (gimp...))) WITH SCRIPT-FU V2
+              (plist (gimp-item-get-parasite-list item))
+        )
         (and (member name plist)
              (gimp-item-detach-parasite item name))))
 
     (define (get-layer-by-tattoo img tat)
-      (tsh_set_v3 #t)
       (and tat
            (string2number tat)
-           (let* ((layer (gimp-image-get-layer-by-tattoo img (string2number tat))))
+           (let* (
+                    ;; (layer (car (gimp...))) WITH SCRIPT-FU V2
+                    (layer (gimp-image-get-layer-by-tattoo img (string2number tat)))
+             )
              (and (not (= layer -1)) layer))))
 
     (define (layerscript-layer-name srctat tag-index layer-index)
@@ -264,19 +241,24 @@ recurses down a layer group even if it passes the test"
                      "." (number->string layer-index)))
 
     (define (make-layerscript-layer img pos-layer lname tat)
-      (tsh_set_v3 #t)
       (let* ((layer (make-image-sized-layer img lname))
+
+             ;; (parent (car (gimp...))) WITH SCRIPT-FU V2
              (parent (gimp-item-get-parent pos-layer))
-             (pos (+ (gimp-image-get-item-position img pos-layer) 1)))
+
+             ;; (pos (+ (car (gimp...)) 1)) WITH SCRIPT-FU V2
+             (pos (+ (gimp-image-get-item-position img pos-layer) 1))
+             )
         (if (< parent 0) (set! parent 0))
         (gimp-image-insert-layer img layer parent pos)
         (if tat (gimp-item-set-tattoo layer (string2number tat)))
         layer))
 
     (define (get-linked-layer img source-layer pos-layer tag-index layer-index)
-      (tsh_set_v3 #t)
-      (let* ((lname (layerscript-layer-name (gimp-item-get-tattoo source-layer)
-                                            tag-index layer-index))
+      (let* ((lname (layerscript-layer-name
+                     ;; (car (gimp-...  ...)) WITH SCRIPT-FU V2
+                     (gimp-item-get-tattoo source-layer)
+                     tag-index layer-index))
              (pname (string-append *parasite-prefix* "-" (number->string tag-index)))
              (par (get-parasite source-layer pname)))
         (if par
@@ -290,14 +272,20 @@ recurses down a layer group even if it passes the test"
                   (begin
                     (if prev-layer (set! pos-layer prev-layer))
                     (let* ((layer (make-layerscript-layer img pos-layer lname cur-tat))
-                           (new-tat (number->string (gimp-item-get-tattoo layer))))
+                           (new-tat (number->string
+                                     ;; (car (gimp...)) WITH SCRIPT-FU V2
+                                     (gimp-item-get-tattoo layer)
+                                    )))
                       (if cur-tat
                           (set-car! (list-tail tattoo-list layer-index) new-tat)
                           (set! tattoo-list (append tattoo-list (list new-tat))))
                       (set-parasite source-layer pname (string-join tattoo-list " "))
                       (cons layer #t)))))
             (let* ((layer (make-layerscript-layer img pos-layer lname #f))
-                   (new-tat (number->string (gimp-item-get-tattoo layer))))
+                   (new-tat (number->string
+                             ;; (car (gimp-...  ...)) WITH SCRIPT-FU V2
+                             (gimp-item-get-tattoo layer)
+                            )))
               (set-parasite source-layer pname new-tat)
               (cons layer #t)))))
 
@@ -308,19 +296,26 @@ recurses down a layer group even if it passes the test"
         (string-append "(" (car cs) "," (cadr cs) "," (caddr cs) ")")))
 
     (define (get-color-from-register layer n)
-      (tsh_set_v3 #t)
       (let* ((pname (string-append *parasite-color-prefix* "-" (number->string n)))
              (par (get-parasite layer pname)))
         (if par
             (color-parser (caddr par))
-            (let* ((fg (gimp-context-get-foreground)))
+            (let* (
+                    ;; (fg (car (gimp...))) WITH SCRIPT-FU V2
+                    (fg (gimp-context-get-foreground))
+              )
               (set-parasite layer pname (color2string fg))
               fg))))
 
     (define (layerscript-modify-color-register img drawables n color remove)
+      ;; @param img: Unused. gimp.Image.
+      ;; @param n: "Register". int.
+      ;; @param color: "Color". tuple[int|float, int|float, int|float].
+      ;; @param remove: "Clear register". #t or #f or TRUE(1) or FALSE(0).
       (let ((layer (vector-ref drawables 0))
-            (pname (string-append *parasite-color-prefix* "-" (number->string n))))
-        (if (or (eqv? remove TRUE) (eqv? remove #t))
+            (pname (string-append *parasite-color-prefix* "-" (number->string n)))
+        )
+        (if (or (eqv? remove TRUE) (eqv? remove #t)); (= remove TRUE) WITH SCRIPT-FU V2
             (remove-parasite layer pname)
             (set-parasite layer pname (color2string color)))))
 
@@ -447,30 +442,25 @@ recurses down a layer group even if it passes the test"
 
     ;; selection actions
 
-    (define (layerscript-alpha img params)    
-      (tsh_set_v3 #t)
+    (define (layerscript-alpha img params)
       (with-params
        (((mode selmode) 2))
        (lambda (source target opts)
          (gimp-image-select-item img mode source))))
 
     (define (layerscript-all img params)
-      (tsh_set_v3 #t)
       (lambda (source target opts)
         (gimp-selection-all img)))
 
     (define (layerscript-none img params)
-      (tsh_set_v3 #t)
       (lambda (source target opts)
         (gimp-selection-none img)))
 
     (define (layerscript-invert img params)
-      (tsh_set_v3 #t)
       (lambda (source target opts)
         (gimp-selection-invert img)))
 
     (define (layerscript-grow img params)
-      (tsh_set_v3 #t)
       (with-params
        ((steps 1))
        (let* ((fn (if (< steps 0) gimp-selection-shrink gimp-selection-grow))
@@ -479,7 +469,6 @@ recurses down a layer group even if it passes the test"
            (fn img steps)))))
 
     (define (layerscript-feather img params)
-      (tsh_set_v3 #t)
       (with-params
        (((radius pint) 1))
        (lambda (source target opts)
@@ -496,52 +485,60 @@ recurses down a layer group even if it passes the test"
          (fn img target x y))))
 
     (define (layerscript-move-selection img params)
-      (tsh_set_v3 #t)
       (layerscript-move-core
        img params
        (lambda (img target x y)
          (gimp-selection-translate img x y))))
 
     (define (select-rectangle img op x y width height)
-      (tsh_set_v3 #t)
-      (gimp-context-set-feather #f)
+      (gimp-context-set-feather #f) ; FALSE WITH SCRIPT-FU V2
       (gimp-image-select-rectangle img op x y width height))
 
     (define (layerscript-lbox img params)
-      (tsh_set_v3 #t)
       (with-params
        (((mode selmode) 2))
        (lambda (source target opts)
          (let ((xy (gimp-drawable-get-offsets source))
+               ;; (width (car (gimp...))) WITH SCRIPT-FU V2
                (width (gimp-drawable-get-width source))
-               (height (gimp-drawable-get-height source)))
+               ;; (height (car (gimp...))) WITH SCRIPT-FU V2
+               (height (gimp-drawable-get-height source))
+           )
            (select-rectangle img mode (car xy) (cadr xy) width height)))))
 
     (define (layerscript-sbox img params)
-      (tsh_set_v3 #t)
       (with-params
        (((mode selmode) 2))
        (lambda (source target opts)
          (let* ((bounds (gimp-selection-bounds img)))
-           (ssiun-errmsgln* "img=" img "bounds=" bounds)
-           (if (eqv? (list-ref bounds 0) #t)
-               (let* ((x (list-ref bounds 1))
-                      (y (list-ref bounds 2))
+           (if (eqv? (list-ref bounds 0) #t) ; (= (car bounds) TRUE) WITH SCRIPT-FU V2
+               (let* (
+                      (x (list-ref bounds 1)) ; (x (cadr bounds))
+                      (y (list-ref bounds 2)) ; (y (caddr bounds))
                       (width (- (list-ref bounds 3) x))
                       (height (- (list-ref bounds 4) y)))
-                 (tsh-debugvars "bounds" bounds "x" x "y" y "width" width "height" height)
                  (select-rectangle img mode x y width height)))))))
 
     ;; TODO
     ;; abox (alpha bounding box)
 
     (define (fade-selection img level)
-      (tsh_set_v3 #t)
-      (let ((sel (gimp-image-get-selection img)))
-        (gimp-drawable-levels sel 0 0 1 #f 1 0 (/ level 255) #f)))
+      (let (
+            (sel (gimp-image-get-selection img)) ; (sel (car (gimp...))) WITH SCRIPT-FU V2
+           )
+        ;; (gimp-drawable-levels drawable=sel
+        ;;                       channel=0(HISTOGRAM-VALUE)
+        ;;                       low-input=0.0(0/255) (0.0<low-input<=1.0, default=0.0) (GUI default=0)
+        ;;                       high-input=1.0(255/255) (0.0<low-input<=1.0, default=0.0) (GUI default=255)
+        ;;                       clamp-input=FALSE
+        ;;                       gamma=1.0 (default=0.1, 0.1<gamma<=10.0) (GUI default = 1.0)
+        ;;                       low-output=0.0(0/255) (0.0<low-output<=1.0, default=0.0) (GUI default=0)
+        ;;                       high-output=level/255 (0<=high-output<=1.0, default=0.0) clamp-output) (GUI default=255)
+        ;; (gimp-drawable-levels sel 0 0 1 FALSE 1 0 (/ level 255) FALSE) when SCRIPT-FU was used
+        (gimp-drawable-levels sel 0 0 1 #f 1 0 (/ level 255) #f)
+    ))
 
     (define (layerscript-fade img params)
-      (tsh_set_v3 #t)
       (with-params
        (((level pint) 128) (check-selection 0))
        (if (> level 255) (set! level 255))
@@ -553,20 +550,24 @@ recurses down a layer group even if it passes the test"
     ;; editing actions
 
     (define (layerscript-copy img params)
-      (tsh_set_v3 #t)
       (with-params
        ((check-selection 0))
        (lambda (source target opts)
          (save-selection img)
          (if (and (or (= check-selection 0)
-                      (is-true? gimp-selection-bounds img))
-                  (is-true? gimp-edit-copy source))
-             (let ((fl (gimp-edit-paste target #f)))
-               (gimp-floating-sel-anchor fl)))
-         (restore-selection img))))
+                      (is-true? gimp-selection-bounds img)
+                  )
+                  (is-true? gimp-edit-copy (vector source))
+             )
+             (let (
+                   ;; (fl (car (gimp-edit-paste target FALSE))) ; Gimp 2 code
+                   (fl (vector-ref (gimp-edit-paste target #f) 0)) ; Gimp 3, SCRIPT-FU V3
+                  )
+              (if (gimp-layer-is-floating-sel fl) ; fl can be non-floating in Gimp 3
+                  (gimp-floating-sel-anchor fl)))
+         (restore-selection img)))))
 
     (define (layerscript-fill img params)
-      (tsh_set_v3 #t)
       (with-params
        (((color color) 0) (check-selection 0))
        (lambda (source target opts)
@@ -580,7 +581,6 @@ recurses down a layer group even if it passes the test"
              (gimp-context-pop))))))
 
     (define (layerscript-clear img params)
-      (tsh_set_v3 #t)
       (with-params
        ((check-selection 0))
        (lambda (source target opts)
@@ -589,7 +589,6 @@ recurses down a layer group even if it passes the test"
              (gimp-drawable-edit-clear target)))))
 
     (define (layerscript-blurshape img params)
-      (tsh_set_v3 #t)
       (with-params
        (((color color) 0) (init 3) (size 5) (invert 0))
        (lambda (source target opts)
@@ -646,7 +645,6 @@ recurses down a layer group even if it passes the test"
     ;; layer actions
 
     (define (layerscript-opacity img params)
-      (tsh_set_v3 #t)
       (with-params
        (((opacity float) 100))
        (if (< opacity 0) (set! opacity 0))
@@ -656,7 +654,6 @@ recurses down a layer group even if it passes the test"
 
 
     (define (layerscript-move-layer img params)
-      (tsh_set_v3 #t)
       ;; TODO: ensure idempotency
       (layerscript-move-core
        img params
@@ -664,7 +661,6 @@ recurses down a layer group even if it passes the test"
          (gimp-item-transform-translate target x y))))
 
     (define (layerscript-move-layer-reset img params)
-      (tsh_set_v3 #t)
       (lambda (target)
         (gimp-layer-set-offsets target 0 0)
         ))
@@ -693,8 +689,6 @@ recurses down a layer group even if it passes the test"
                   (set-car! (cdr opts) (if src src (- li 1)))
                   (set-car! opts (- li 1)))
                  (src (set-car! (cdr opts) src)))))))
-
-
 
     (define *layerscript-actions*
       `(("alpha" ,layerscript-alpha)
@@ -736,7 +730,6 @@ recurses down a layer group even if it passes the test"
     ;; main loop
 
     (define (clear-layer img layer resets)
-      (tsh_set_v3 #t)
       (save-selection img)
       (gimp-selection-none img)
       (if resets
@@ -810,7 +803,6 @@ recurses down a layer group even if it passes the test"
         (restore-selection img)
         pos-layer))
 
-
     (define (layerscript-process-layer img layer)
       (let ((tags (extract-layerscript-tags layer))
             (pos-layer layer)
@@ -824,43 +816,57 @@ recurses down a layer group even if it passes the test"
         ))
 
     (define (layerscript-process-all img drawables)
-      (tsh_set_v3 #t)
       (srand (realtime))
       (gimp-image-undo-group-start img)
-      (let ((active-layers (gimp-image-get-selected-layers img)))
+      (let (
+              ;; This was (active-layer (car (gimp...))) in GIMP 2
+              (active-layers (gimp-image-get-selected-layers img))
+        )
         (walk-layers-recursive-full
          img #f
          (lambda (layer) (layerscript-process-layer img layer)))
         (if (not (= (vector-length active-layers) 0))
             (gimp-image-set-selected-layers img active-layers)))
       (gimp-image-undo-group-end img)
-      (gimp-displays-flush))))
+      (gimp-displays-flush))
+  )
+)
 
-(define script-fu-layerscript-process-all lscr::layerscript-process-all)
+;; (define script-fu-layerscript-process-all lscr::layerscript-process-all)
+(define (script-fu-layerscript-process-all img drawables)
+  (script-fu-use-v3) ; THIS SETTING IS GLOBAL.
+  (set! *ssiun-v3* #t)
+  (lscr::layerscript-process-all img drawables))
 
-(script-fu-register-filter "script-fu-layerscript-process-all"
-                           "Process LayerScript tags"
-                           "Process all LayerScript tags"
-                           "Timofei Shatrov"
-                           "Copyright 2025"
-                           "2025"
-                           "RGB RGBA GRAY GRAYA"
-                           SF-ONE-OR-MORE-DRAWABLE  )
+;;(define script-fu-layerscript-modify-color-register lscr::layerscript-modify-color-register)
+(define (script-fu-layerscript-modify-color-register img drawables n color remove)
+  (script-fu-use-v3) ; THIS SETTING IS GLOBAL.
+  (set! *ssiun-v3* #t)
+  (lscr::layerscript-modify-color-register  img drawables n color remove))
 
+(script-fu-register-filter
+ "script-fu-layerscript-process-all"
+ _"Process LayerScript tags"
+ _"Process all LayerScript tags"
+ "Timofei Shatrov"
+ "Copyright 2025"
+ "2025"
+ "RGB RGBA GRAY GRAYA"
+ SF-ONE-OR-MORE-DRAWABLE)
 (script-fu-menu-register "script-fu-layerscript-process-all" "<Image>/Filters/Script-Fu/LayerScript")
+(script-fu-register-i18n "script-fu-layerscript-process-all" "Standard")
 
-(define script-fu-layerscript-modify-color-register lscr::layerscript-modify-color-register)
-
-(script-fu-register-filter "script-fu-layerscript-modify-color-register"
-                           "Modify color registers..."
-                           "Modify a color register attached to active layer"
-                           "Timofei Shatrov"
-                           "Copyright 2025"
-                           "2025"
-                           "RGB RGBA GRAY GRAYA"
-                           SF-ONE-DRAWABLE
-                           SF-ADJUSTMENT "Register" '(0 0 255 1 1 0 SF-SPINNER)
-                           SF-COLOR "Color" '(0 0 0)
-                           SF-TOGGLE "Clear register" 0  )
-
+(script-fu-register-filter
+ "script-fu-layerscript-modify-color-register"
+ _"Modify color registers..."
+ _"Modify a color register attached to active layer"
+ "Timofei Shatrov"
+ "Copyright 2025"
+ "2025"
+ "RGB RGBA GRAY GRAYA"
+ SF-ONE-DRAWABLE
+ SF-ADJUSTMENT _"Register" '(0 0 255 1 1 0 SF-SPINNER)
+ SF-COLOR _"Color" '(0 0 0)
+ SF-TOGGLE _"Clear register" 0)
 (script-fu-menu-register "script-fu-layerscript-modify-color-register" "<Image>/Filters/Script-Fu/LayerScript")
+(script-fu-register-i18n "script-fu-layerscript-modify-color-register" "Standard")
