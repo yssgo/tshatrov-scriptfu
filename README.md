@@ -36,7 +36,7 @@ layerscript.scm 을 GIMP 2.10의 스크립트 폴더 중 하나에 저장.
 
 레이어 이름에 효과 지정 태그를 사용.
 
-"Modify all LayerScript tags(모든 레이어스크립트 태그 처리)" 메뉴를 실행하면,
+"Process LayerScript tags(레이어스크립트 태그 처리)" 메뉴를 실행하면,
 레이어스크립트(LayerScript) 태그가 지정되고 링크(사슬 고리 표시)된 각 레이어에 대해,
 효과 적용 레이어(레이어 이름이 LayerScript layer로 시작함)를 해당 레이어 아래에 생성.
 
