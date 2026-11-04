@@ -53,7 +53,7 @@ Tshatrov 의 레이어스크립트.
 [layerscript3-test-before-image]: https://github.com/user-attachments/assets/87d158f7-7f3e-42a2-983c-e9c94b03ff15
 [layerscript3-test-after-image]: https://github.com/user-attachments/assets/a9ab4e88-7ebe-41f1-b8d7-5fd386976683
 
-| LayerScript 태그 처리 실행 전 레이어 목록 창 | LayerScript 태그 처리실행 후 레이어 목록 창 |
+| LayerScript 태그 처리 실행 전 레이어 목록 창 | LayerScript 태그 처리 실행 후 레이어 목록 창 |
 | -- | -- |
 | ![LayerScript 실행 전 레이어][layerscript3-test-before-layers-image] | ![LayerScript 실행 후 레이어][layerscript3-test-after-layers-image] |
 
