@@ -48,15 +48,15 @@ layerscript.scm 을 GIMP 2.10의 스크립트 폴더 중 하나에 저장.
 
 색상 등록부(등록 항목)는 개별 레이어용임. (전체 레이어용이 아님.)
 
-| LayerScript 태그 처리 실행 전                                     | LayerScript 태그 처리실행 후                                    |
-| ---------------------------------------------------------------- | ------------------------------------------------------------- |
-| ![LayerScript2-test-BEFORE.png][layerscript2-test-before-image]  | ![LayerScript2-test-AFTER.png][layerscript2-test-after-image] |
+| LayerScript 태그 처리 실행 전 | LayerScript 태그 처리 실행 후 |
+| -- | -- |
+| ![LayerScript2-test-BEFORE.png][layerscript2-test-before-image] | ![LayerScript2-test-AFTER.png][layerscript2-test-after-image] |
 
 [layerscript2-test-before-image]: https://github.com/user-attachments/assets/210bb42b-6bd1-4f8d-8dc0-8cb090155e20
 [layerscript2-test-after-image]: https://github.com/user-attachments/assets/32803ef6-d86b-4893-b7eb-be5d67304b23
 
-| LayerScript 태그 처리 실행 전 레이어 목록 창                          | LayerScript 태그 처리실행 후 레이어 목록 창                          |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| LayerScript 태그 처리 실행 전 레이어 목록 창 | LayerScript 태그 처리 실행 후 레이어 목록 창 |
+| -- | -- |
 | ![LayerScript 실행 전 레이어][layerscript2-test-before-layers-image] | ![LayerScript 실행 후 레이어][layerscript2-test-after-layers-image] |
 
 [layerscript2-test-before-layers-image]: https://github.com/user-attachments/assets/220e77cf-9bc0-47f1-a72a-fb88811b3665
