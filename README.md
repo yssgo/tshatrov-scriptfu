@@ -48,23 +48,30 @@ layerscript.scm 을 GIMP 2.10의 스크립트 폴더 중 하나에 저장.
 
 색상 등록부(등록 항목)는 개별 레이어용임. (전체 레이어용이 아님.)
 
-**예시 이미지**
+| LayerScript 태그 처리 실행 전                                     | LayerScript 태그 처리실행 후                                    |
+| ---------------------------------------------------------------- | ------------------------------------------------------------- |
+| ![LayerScript2-test-BEFORE.png][layerscript2-test-before-image]  | ![LayerScript2-test-AFTER.png][layerscript2-test-after-image] |
 
-<!-- img width="800" height="708" alt="LayerScript-Test" src="https://github.com/user-attachments/assets/3b7a2cfe-4539-4077-a1dc-cc08792886dd" / -->
+[layerscript2-test-before-image]: https://github.com/user-attachments/assets/210bb42b-6bd1-4f8d-8dc0-8cb090155e20
+[layerscript2-test-after-image]: https://github.com/user-attachments/assets/32803ef6-d86b-4893-b7eb-be5d67304b23
 
-![예시 이미지](https://github.com/user-attachments/assets/3b7a2cfe-4539-4077-a1dc-cc08792886dd)
+| LayerScript 태그 처리 실행 전 레이어 목록 창                          | LayerScript 태그 처리실행 후 레이어 목록 창                          |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| ![LayerScript 실행 전 레이어][layerscript2-test-before-layers-image] | ![LayerScript 실행 후 레이어][layerscript2-test-after-layers-image] |
 
-| 예시 이미지의 레이어
-| -
-| 레이어 \{dropshadow:(244.4,211.7,46.5)}
-| LayerScript layer #33.0.0
-| 윌버 \{alpha\|fill\|move:10:10}
-| LayerScript layer #3.0.0
-| 피망 \{alpha\|fill:2\|move:100:100}
-| LayerScript layer #2.0.0
-| 인물화 \{alpha\|grow:3\|fill}
-| LayerScript layer #32.0.0
-| Stars
+[layerscript2-test-before-layers-image]: https://github.com/user-attachments/assets/220e77cf-9bc0-47f1-a72a-fb88811b3665
+[layerScript2-test-after-layers-image]: https://github.com/user-attachments/assets/17875dde-432a-4a1f-910c-6d37f60411e8
+
+**LayerScript 태그 처리 실행 전 레이어 계층 구조**
+
+```
+비눗방울{gff:10:20:(255,0,246)}
+레이어 {dropshadow:(244.4,211.7,46.5)}
+윌버 {alpha|fill|move:10:10}
+피망 {alpha|fill:2|move:100:100}
+인물화 {alpha|grow:3|fill}
+Stars
+```
 
 
 ### 메뉴
